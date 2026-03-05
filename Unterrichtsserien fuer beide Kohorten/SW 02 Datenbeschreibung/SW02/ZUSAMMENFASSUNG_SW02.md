@@ -1,6 +1,9 @@
 # ASTAT – Angewandte Statistik für Datenwissenschaften
 ## SW 02 – Datenbeschreibung mit Python
 
+GRÖSSER GLEICH BEI WEILSCHLEIFE MACHT BEI KLEINEN DATEN MÄNGEN EINEN GROSSEN UNTERSCHIED, BEI FINAL RICHTIG
+
+
 ---
 
 ## 🎯 Lernziele

@@ -1,0 +1,21 @@
+# Verhindern vom Hochladen von ZIP-Archiven
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# Temporäre Dateien und unwichtige Systemdateien
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python spezifische Ordner und Dateien
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
