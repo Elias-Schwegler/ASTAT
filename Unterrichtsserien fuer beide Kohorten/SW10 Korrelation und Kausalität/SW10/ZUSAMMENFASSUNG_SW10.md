@@ -48,7 +48,19 @@ Zwei metrische Merkmale $A = (a_1, a_2, \ldots)$ und $B = (b_1, b_2, \ldots)$ er
 | Punkte **fallen** von links oben nach rechts unten | $a_i \uparrow \Rightarrow b_i \downarrow$ | **negativ** ($r < 0$) |
 | Punkte bilden **formlose Wolke** | keine lineare Tendenz | **unkorreliert** ($r \approx 0$) |
 
+<center>
+<img src="Bilder/korrelationsmuster.png" width="100%" />
+</center>
+
+> **Lesehilfe zur Grafik:** Drei Streudiagramme mit je 200 Punkten, alle aus demselben $A$ erzeugt, aber mit unterschiedlichem $B$. **Links:** $B$ wächst mit $A$ → Punkte ziehen schräg nach oben, $r \approx +0.78$. **Mitte:** $B$ fällt mit $A$ → Punkte perfekt auf einer fallenden Linie, $r \approx -1$. **Rechts:** $B$ unabhängig gewürfelt → zufällige Wolke, $r \approx 0$. Das Vorzeichen zeigt die Richtung, der Betrag die Güte der Geraden.
+
 > **Wichtig:** Korrelation beschreibt nur **lineare** Abhängigkeit. Unkorrelierte Merkmale können trotzdem **nicht-linear** voneinander abhängen (z.B. quadratisch, zirkulär).
+
+<center>
+<img src="Bilder/r_null_aber_zusammenhang.png" width="100%" />
+</center>
+
+> **Lesehilfe zur Grafik:** Alle drei Datensätze haben **strukturelle Abhängigkeit** zwischen $A$ und $B$ – trotzdem liefert Pearson fast Null. **Links:** $B = A^2$ (Parabel) – symmetrisch, daher heben sich positive und negative Beiträge zur Kovarianz auf. **Mitte:** Punkte auf einem Kreis – kein linearer, aber ein klarer geometrischer Zusammenhang. **Rechts:** Sinuskurve – perfekt periodisch, aber kein linearer Trend. **Lesson:** $r = 0$ ist nur die Aussage "keine Gerade passt", nicht "keine Beziehung".
 
 ---
 
@@ -70,6 +82,12 @@ $$\sigma_{ab} = \frac{1}{n} \sum_{i=1}^{n} (a_i - \bar{a}) \cdot (b_i - \bar{b})
 - **Positive Korrelation** → viele Punkte in Q1 & Q3 → $\sigma_{ab} > 0$.
 - **Negative Korrelation** → viele Punkte in Q2 & Q4 → $\sigma_{ab} < 0$.
 - **Unkorreliert** → Punkte gleichmässig auf alle vier Quadranten → $\sigma_{ab} \approx 0$.
+
+<center>
+<img src="Bilder/kovarianz_quadranten.png" width="70%" />
+</center>
+
+> **Lesehilfe zur Grafik:** Der schwarze Stern markiert den Mittelpunkt $(\bar{a}, \bar{b})$. Die gestrichelten Achsen teilen die Fläche in vier Quadranten. **Grüne Quadranten (Q1, Q3):** Produkt $(a_i - \bar{a})(b_i - \bar{b})$ ist **positiv** – ein Punkt hier "zieht" die Kovarianz ins Positive. **Rote Quadranten (Q2, Q4):** Produkt ist **negativ** – Punkt zieht nach unten. Im Beispiel liegen viele Punkte in Q1 und Q3, darum ist $\sigma_{ab} \approx 3.44 > 0$ und die Korrelation positiv.
 
 > **Bemerkung:** Setzt man $B = A$, erhält man die mittlere quadratische Abweichung: $\sigma_{aa} = \frac{1}{n} \sum (a_i - \bar{a})^2$.
 
@@ -104,6 +122,12 @@ $$\boxed{\;r = \frac{\sigma_{ab}}{\sigma_a \cdot \sigma_b}\;}$$
 | $0.6 - 0.8$ | stark |
 | $> 0.8$ | sehr stark |
 
+<center>
+<img src="Bilder/r_skala.png" width="92%" />
+</center>
+
+> **Lesehilfe zur Grafik:** Der Farbverlauf geht von einem roten Bordeaux bei $r = -1$ (perfekt negative Korrelation) über Weiss bei $r = 0$ (unkorreliert) zum HSLU-Bordeaux bei $r = +1$ (perfekt positive Korrelation). Die **Marker oberhalb** zeigen typische Einordnungen. Anders als $C_{\text{korr}}$ aus SW 09 geht die $r$-Skala **bis −1**, weil Pearson auch die **Richtung** des Zusammenhangs mitmisst.
+
 > **Hinweis:** Bei `df.corr()` wird `ddof` **nicht** benötigt, da sich die Faktoren $\frac{1}{n}$ bzw. $\frac{1}{n-1}$ aus Kovarianz und Standardabweichungen im Bruch **wegkürzen**.
 
 ---
@@ -128,11 +152,26 @@ Wenn **mindestens eines** der Merkmale nur **ordinal** ist, können wir nicht mi
 
 (4.5 = Mittel von 2…7;  8.5 = Mittel von 8…9.)
 
+<center>
+<img src="Bilder/rangzahlen_bindungen.png" width="100%" />
+</center>
+
+> **Lesehilfe zur Grafik:** Die drei Zeilen zeigen dieselben 10 Werte in drei Darstellungen. **Zeile 1 (Wert):** Originaldaten – gleiche Kategorien haben gleiche Farbe. **Zeile 2 (Rohposition):** Einfach durchnummeriert 1…10. **Zeile 3 (Rangzahl):** Bei Bindungen werden die Positionen gemittelt – alle sechs "gut" bekommen $(2+3+4+5+6+7)/6 = 4.5$, die beiden "sehr gut" bekommen $(8+9)/2 = 8.5$. Auf diesen Rangzahlen rechnet Spearman die Pearson-Formel.
+
 **Der Rangkorrelationskoeffizient** ist der Pearson-Koeffizient der **Rangzahlen**:
 
 $$r_{Sp} = \frac{\sigma_{R(a)R(b)}}{\sigma_{R(a)} \cdot \sigma_{R(b)}}$$
 
 **Vorteil:** Erfasst auch **monotone, nicht-lineare** Zusammenhänge, da nur die Reihenfolge zählt.
+
+<center>
+<img src="Bilder/pearson_vs_spearman.png" width="100%" />
+</center>
+
+> **Lesehilfe zur Grafik:** Drei Szenarien vergleichen Pearson und Spearman direkt.
+> - **Links (linear):** Beide Koeffizienten liegen bei ≈ +0.95 – bei sauberen linearen Daten liefern sie dasselbe.
+> - **Mitte (exponentiell):** Pearson unterschätzt den Zusammenhang (+0.86), weil die Kurve nicht gerade ist. Spearman erkennt die **monotone Struktur** perfekt (+0.94).
+> - **Rechts (linear + Ausreisser):** Drei einzelne Extremwerte **drücken Pearson auf +0.60**, während Spearman stabil bei +0.94 bleibt – Ränge sind robust gegen Ausreisser.
 
 ---
 
@@ -144,6 +183,15 @@ Bei vielen Tausenden Punkten überlappen sich die Punkte im Streudiagramm so sta
 |:---|:---|:---|
 | **Hexbin-Plot** | `plt.hexbin()` | Fläche in sechseckige Zellen teilen, Punkte pro Zelle zählen, Farbe = Dichte |
 | **KDE** | `sns.kdeplot()` | Glatte, kontinuierliche Dichtefunktion schätzen (Höhenlinien-Landschaft) |
+
+<center>
+<img src="Bilder/grosse_datensaetze.png" width="100%" />
+</center>
+
+> **Lesehilfe zur Grafik:** Exakt **derselbe** Datensatz ($n = 15\,000$) in drei Darstellungen.
+> - **Links (Scatter):** Die Punkte überlappen sich so stark, dass die Wolke unleserlich wird – trotz niedriger Transparenz.
+> - **Mitte (Hexbin):** Fläche wird in gleich grosse Sechsecke zerlegt, pro Zelle wird die Punktanzahl farblich codiert. Der dichte Bereich (hellere Farbe) wird sofort sichtbar.
+> - **Rechts (KDE):** Glatte Dichteschätzung als Höhenlinien – wie auf einer topografischen Karte zeigt sie "Berge" (hohe Punktdichte) und "Täler". Kein Binning-Artefakt, dafür bandbreitenabhängig.
 
 > **Analogie zur topografischen Karte:** Hohe Dichte = Berg (viele Punkte), niedrige Dichte = Ebene. Enge Konturlinien = steiler Anstieg, weit auseinander = flach.
 
@@ -160,7 +208,19 @@ Bei vielen Tausenden Punkten überlappen sich die Punkte im Streudiagramm so sta
 
 > **Merksatz:** **"Correlation does not imply causation."** Ein hoher $r$ kann durch einen **Confounder** (dritte Variable) oder durch **reinen Zufall** entstehen.
 
+<center>
+<img src="Bilder/confounder.png" width="85%" />
+</center>
+
+> **Lesehilfe zur Grafik:** Die rote gestrichelte Linie oben zeigt die **beobachtete Korrelation** zwischen Eisverkauf und Sonnenbrand – statistisch real, denn beide steigen im Sommer. Aber: Eis verursacht keinen Sonnenbrand und umgekehrt. Der **Confounder** unten (Sommer / Hitze) verursacht **beide** Effekte gleichzeitig. Die beiden HSLU-farbigen Pfeile zeigen die **echten Ursachenpfeile**. Die horizontale Korrelation ist also eine **Scheinkorrelation**.
+
 **Berühmtes Beispiel: Wein & Herzmortalität.** In 18 Ländern sinkt die Mortalität mit steigendem Weinkonsum ($r \approx -0.75$). Aber: Länder mit hohem Weinkonsum (Frankreich, Italien) haben auch **andere Lebensstil-Faktoren** (Mittelmeerkost, Bewegung, soziale Strukturen). Der Wein selbst ist vermutlich **nicht die alleinige Ursache**.
+
+<center>
+<img src="Bilder/kausalitaet_wein.png" width="85%" />
+</center>
+
+> **Lesehilfe zur Grafik:** Streudiagramm der 18 Länder mit Länder-Codes (FR = Frankreich, IT = Italien, usw.). Die gestrichelte HSLU-Linie ist die Regressionsgerade – sie fällt deutlich, daher $r = -0.75$. Aber: die beiden **extremsten Punkte rechts** (IT, FR) ziehen die Gerade stark. Diese Länder unterscheiden sich nicht nur im Weinkonsum, sondern in vielen Lebensstil-Faktoren gleichzeitig – ein klassischer Fall für **Confounder**. Der Plot ist ein gutes Beispiel dafür, dass man Korrelationen **immer im Kontext** interpretieren muss.
 
 ---
 
