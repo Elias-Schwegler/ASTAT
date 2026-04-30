@@ -1,0 +1,905 @@
+{
+  "version": "1.0",
+  "title": "ASTAT Karteikarten",
+  "description": "Karteikarten für die Prüfung Angewandte Statistik für Datenwissenschaften (HSLU Semester 2)",
+  "categories": {
+    "Begriff": "Definitionen und Grundkonzepte",
+    "Formel": "Formeln, die man kennen oder verstehen muss",
+    "Code": "Python-Befehle und ihre Bedeutung",
+    "Konzept": "Tieferes Verständnis und Zusammenhänge",
+    "Falle": "Häufige Fehler und Misverständnisse"
+  },
+  "cards": [
+    {
+      "id": "sw01-01",
+      "week": "SW01",
+      "topic": "Datenmanipulation mit Python",
+      "category": "Begriff",
+      "difficulty": "easy",
+      "front": "Was sind die drei Skalenniveaus von Merkmalen?",
+      "back": "**Nominal** – Kategorien ohne Ordnung (Stadt, Geschlecht).<br><br>**Ordinal** – Kategorien mit natürlicher Ordnung, aber ohne Abstand (Schulnoten, Zufriedenheit).<br><br>**Metrisch** – Zahlen mit Abstand und Ordnung (Gewicht, Temperatur)."
+    },
+    {
+      "id": "sw01-02",
+      "week": "SW01",
+      "topic": "Datenmanipulation mit Python",
+      "category": "Code",
+      "difficulty": "medium",
+      "front": "Was ist der Unterschied zwischen <code>df.iloc[0, 1]</code> und <code>df.loc[\"A\", \"B\"]</code>?",
+      "back": "<code>iloc</code> – <b>positionsbasiert</b> (Integer-Index): hier 1. Zeile, 2. Spalte.<br><br><code>loc</code> – <b>labelbasiert</b>: hier Zeile mit Label \"A\", Spalte mit Label \"B\".<br><br><b>Falle:</b> <code>iloc</code> ist <b>exklusiv</b> am Ende (<code>iloc[0:3]</code> = Zeilen 0,1,2), <code>loc</code> ist <b>inklusiv</b> (<code>loc[\"A\":\"C\"]</code> = inkl. \"C\")."
+    },
+    {
+      "id": "sw01-03",
+      "week": "SW01",
+      "topic": "Datenmanipulation mit Python",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Was bewirkt <code>axis=0</code> bzw. <code>axis=1</code> bei pandas-Operationen wie <code>.mean()</code>?",
+      "back": "<code>axis=0</code> (Default) – Operation läuft <b>entlang der Zeilen</b> nach unten → Resultat <b>pro Spalte</b>.<br><br><code>axis=1</code> – Operation läuft <b>entlang der Spalten</b> nach rechts → Resultat <b>pro Zeile</b>.<br><br><b>Eselsbrücke:</b> axis = die Achse, die <b>verschwindet</b>."
+    },
+    {
+      "id": "sw01-04",
+      "week": "SW01",
+      "topic": "Datenmanipulation mit Python",
+      "category": "Code",
+      "difficulty": "medium",
+      "front": "Was tut <code>df.groupby(\"stadt\")[\"miete\"].mean()</code>?",
+      "back": "Gruppiert die Zeilen nach den Werten in <code>stadt</code> und berechnet dann pro Gruppe den <b>Mittelwert der Spalte miete</b>.<br><br>Resultat: eine pandas Series mit den Stadtnamen als Index und den Mittelwerten als Werte."
+    },
+    {
+      "id": "sw01-05",
+      "week": "SW01",
+      "topic": "Datenmanipulation mit Python",
+      "category": "Falle",
+      "difficulty": "medium",
+      "front": "<code>np.unique(arr, return_counts=True)</code> – welcher Stolperstein bei <b>ordinalen</b> Daten?",
+      "back": "<code>np.unique</code> gibt die Werte <b>alphabetisch sortiert</b> zurück.<br><br>Bei ordinalen Schulnoten <code>['gut', 'ausgezeichnet', 'genügend']</code> wäre die Sortierung <code>['ausgezeichnet', 'genügend', 'gut']</code> – also <b>nicht</b> in der natürlichen Reihenfolge.<br><br><b>Lösung:</b> <code>pd.Categorical(..., ordered=True, categories=[...])</code> oder manuell sortieren."
+    },
+    {
+      "id": "sw02-01",
+      "week": "SW02",
+      "topic": "Datenbeschreibung",
+      "category": "Formel",
+      "difficulty": "easy",
+      "front": "Formel für den arithmetischen Mittelwert?",
+      "back": "$$\\bar{x} = \\frac{1}{n} \\sum_{i=1}^{n} x_i$$"
+    },
+    {
+      "id": "sw02-02",
+      "week": "SW02",
+      "topic": "Datenbeschreibung",
+      "category": "Konzept",
+      "difficulty": "easy",
+      "front": "Warum ist der <b>Median</b> robuster gegen Ausreisser als der Mittelwert?",
+      "back": "Der Median nimmt nur den <b>mittleren Wert</b>, nachdem alle Werte sortiert wurden. Ausreisser ändern ihre Position in der Sortierung, aber nicht die Mitte.<br><br>Der Mittelwert hingegen <b>summiert alle Werte</b> – ein einzelner extremer Wert kann das Ergebnis stark verzerren.<br><br><b>Beispiel:</b> Einkommen [40k, 45k, 50k, 55k, 10 Mio]<br>Median = 50k, Mittelwert = 2.04 Mio."
+    },
+    {
+      "id": "sw02-03",
+      "week": "SW02",
+      "topic": "Datenbeschreibung",
+      "category": "Formel",
+      "difficulty": "medium",
+      "front": "Formel für die Stichproben-Standardabweichung?",
+      "back": "$$s = \\sqrt{\\frac{1}{n-1} \\sum_{i=1}^{n} (x_i - \\bar{x})^2}$$<br><br>In Python: <code>df.std(ddof=1)</code> (Default in pandas)."
+    },
+    {
+      "id": "sw02-04",
+      "week": "SW02",
+      "topic": "Datenbeschreibung",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Was bedeutet <code>ddof=1</code> bei <code>.std()</code> und warum nicht <code>ddof=0</code> für Stichproben?",
+      "back": "<code>ddof</code> = Delta Degrees Of Freedom – beeinflusst den Nenner: $n - \\texttt{ddof}$.<br><br><code>ddof=0</code> teilt durch $n$ → <b>unterschätzt</b> systematisch die wahre Varianz der Grundgesamtheit (Bias).<br><br><code>ddof=1</code> teilt durch $n - 1$ → <b>erwartungstreu</b> für die Stichprobenvarianz. Der eine 'verlorene' Freiheitsgrad: $\\bar{x}$ wird auch aus den Daten geschätzt.<br><br><b>Faustregel:</b> Stichprobe → <code>ddof=1</code>, vollständige Population → <code>ddof=0</code>."
+    },
+    {
+      "id": "sw02-05",
+      "week": "SW02",
+      "topic": "Datenbeschreibung",
+      "category": "Begriff",
+      "difficulty": "easy",
+      "front": "Was ist der Quartilsabstand (IQR)?",
+      "back": "$\\mathsf{IQR} = Q_3 - Q_1$<br><br>= Abstand zwischen 75%-Quantil und 25%-Quantil. Enthält die mittleren 50 % der Daten.<br><br><b>Eigenschaft:</b> Robust gegen Ausreisser (im Gegensatz zur Standardabweichung). Wird im Boxplot durch die <b>Box</b> visualisiert."
+    },
+    {
+      "id": "sw02-06",
+      "week": "SW02",
+      "topic": "Datenbeschreibung",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Was ist die <b>relative Häufigkeit</b> $h(w)$?",
+      "back": "$$h(w) = \\frac{n(w)}{n}$$<br><br>Anteil der Beobachtungen mit Wert $w$ an der Gesamtanzahl $n$. Liegt zwischen 0 und 1.<br><br>Summe aller relativen Häufigkeiten = 1."
+    },
+    {
+      "id": "sw02-07",
+      "week": "SW02",
+      "topic": "Datenbeschreibung",
+      "category": "Begriff",
+      "difficulty": "medium",
+      "front": "Was misst der <b>Dispersionsindex</b> $P$ und wofür wird er verwendet?",
+      "back": "$$P = \\frac{m}{m-1} \\sum h(w_i) \\cdot (1 - h(w_i))$$<br><br>Wertebereich: $[0, 1]$.<br>$P = 0$: alle Beobachtungen in einer Kategorie (keine Streuung).<br>$P = 1$: gleichverteilt auf alle $m$ Kategorien (maximale Streuung).<br><br>Geeignet für <b>nominale</b> Daten – analog zur Standardabweichung für metrische."
+    },
+    {
+      "id": "sw02-08",
+      "week": "SW02",
+      "topic": "Datenbeschreibung",
+      "category": "Falle",
+      "difficulty": "hard",
+      "front": "Wann liegt der <b>Median links vom Mittelwert</b>? Was sagt das über die Verteilung?",
+      "back": "Bei einer <b>rechtsschiefen</b> Verteilung (langer rechter Tail).<br><br>Der Mittelwert wird vom Tail nach rechts <b>gezogen</b>, der Median bleibt stabil.<br><br><b>Beispiel:</b> Einkommen, Mietpreise, Wohnflächen.<br><br><b>Merksatz:</b> 'Mean follows the tail.'"
+    },
+    {
+      "id": "sw02-09",
+      "week": "SW02",
+      "topic": "Datenbeschreibung",
+      "category": "Begriff",
+      "difficulty": "easy",
+      "front": "Was ist der <b>Modus</b>?",
+      "back": "Der häufigste Wert (oder die häufigste Kategorie) in einem Datensatz.<br><br>In Python: <code>df.mode()</code> (kann mehrere Werte zurückgeben bei Mehrgipfligkeit).<br><br>Einziges Lagemass, das auch für <b>nominale</b> Daten sinnvoll ist."
+    },
+    {
+      "id": "sw02-10",
+      "week": "SW02",
+      "topic": "Datenbeschreibung",
+      "category": "Code",
+      "difficulty": "medium",
+      "front": "Was ergibt <code>df[\"x\"].quantile(0.75)</code>?",
+      "back": "Das <b>75 %-Quantil</b> ($Q_3$): der Wert, unter dem 75 % der Daten liegen.<br><br>Im Boxplot ist das die <b>obere Kante der Box</b>.<br><br>$Q_1 = $ <code>quantile(0.25)</code>, $Q_2 = $ Median = <code>quantile(0.5)</code>."
+    },
+    {
+      "id": "sw03-01",
+      "week": "SW03",
+      "topic": "Datenvisualisierung",
+      "category": "Konzept",
+      "difficulty": "easy",
+      "front": "Welcher Plot-Typ für welches Skalenniveau?",
+      "back": "<b>Nominal:</b> Kreisdiagramm, Balkendiagramm (<code>countplot</code>).<br><br><b>Ordinal:</b> Balkendiagramm <b>mit Reihenfolge</b> (<code>order=[...]</code>!).<br><br><b>Metrisch (eine Variable):</b> Histogramm, Boxplot, KDE.<br><br><b>Metrisch (zwei Variablen):</b> Streudiagramm, Hexbin (gross), KDE-2D."
+    },
+    {
+      "id": "sw03-02",
+      "week": "SW03",
+      "topic": "Datenvisualisierung",
+      "category": "Falle",
+      "difficulty": "medium",
+      "front": "Was bedeutet <code>density=True</code> im Histogramm und was ist die Falle?",
+      "back": "<code>density=True</code> normiert die <b>Fläche</b> unter dem Histogramm auf 1 → Balken zeigen <b>Wahrscheinlichkeitsdichte</b>, nicht Häufigkeit.<br><br><b>Falle:</b> Die Höhen der Balken sind dann <b>nicht</b> Anteile! Höhe × Breite = Anteil. Bei sehr schmalen Bins kann die Höhe > 1 werden.<br><br>Vorteil: Histogramm mit theoretischer Dichtekurve (z.B. Normal) vergleichbar."
+    },
+    {
+      "id": "sw03-03",
+      "week": "SW03",
+      "topic": "Datenvisualisierung",
+      "category": "Begriff",
+      "difficulty": "easy",
+      "front": "Welche fünf Komponenten zeigt ein <b>Boxplot</b>?",
+      "back": "1. <b>Median</b> (Linie in der Box)<br>2. <b>$Q_1$</b> (untere Kante)<br>3. <b>$Q_3$</b> (obere Kante)<br>4. <b>Whisker</b> (üblicherweise bis 1.5 × IQR)<br>5. <b>Ausreisser</b> (Punkte ausserhalb der Whisker)<br><br><b>Nicht</b> dargestellt: Mittelwert, Standardabweichung, Anzahl Datenpunkte."
+    },
+    {
+      "id": "sw03-04",
+      "week": "SW03",
+      "topic": "Datenvisualisierung",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Wann verwendet man <b>Hexbin</b> oder <b>KDE</b> statt einem Streudiagramm?",
+      "back": "Wenn die Datenmenge so gross ist (z.B. $n > 10\\,000$), dass sich die Punkte im Streudiagramm <b>überlagern</b> und Muster nicht mehr erkennbar sind.<br><br><b>Hexbin</b> (<code>plt.hexbin</code>): Fläche in Sechsecke, Farbe = Punktdichte.<br><br><b>KDE</b> (<code>sns.kdeplot</code>): glatte Dichtefunktion mit Höhenlinien (\"topografische Karte\")."
+    },
+    {
+      "id": "sw03-05",
+      "week": "SW03",
+      "topic": "Datenvisualisierung",
+      "category": "Falle",
+      "difficulty": "medium",
+      "front": "Welcher Parameter ist beim <code>countplot</code> für <b>ordinale</b> Daten essentiell?",
+      "back": "<code>order=[...]</code> – legt die Reihenfolge der Balken explizit fest.<br><br>Ohne <code>order</code> sortiert seaborn entweder alphabetisch oder nach Häufigkeit – beides verfälscht die Aussage bei ordinalen Merkmalen.<br><br><b>Beispiel:</b><br><code>sns.countplot(x=\"note\", order=[\"genügend\", \"gut\", \"sehr gut\", \"ausgezeichnet\"])</code>"
+    },
+    {
+      "id": "sw03-06",
+      "week": "SW03",
+      "topic": "Datenvisualisierung",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Wie erkennt man <b>Schiefe</b> in Histogramm und Boxplot?",
+      "back": "<b>Histogramm:</b> Tail (lange Auslauf) zeigt die Richtung der Schiefe.<br>– Tail rechts → <b>rechtsschief</b><br>– Tail links → <b>linksschief</b><br><br><b>Boxplot:</b><br>– Median <b>nicht</b> in der Mitte der Box → schief<br>– längerer Whisker auf einer Seite → Schiefe in diese Richtung"
+    },
+    {
+      "id": "sw04-01",
+      "week": "SW04",
+      "topic": "Modelle für zufällige Ereignisse",
+      "category": "Begriff",
+      "difficulty": "easy",
+      "front": "Was ist der Unterschied zwischen <b>Bernoulli-</b> und <b>Binomial-</b>Verteilung?",
+      "back": "<b>Bernoulli($p$):</b> 1 Versuch, Erfolg/Misserfolg, $X \\in \\{0, 1\\}$.<br><br><b>Binomial($n, p$):</b> $n$ unabhängige Bernoulli-Versuche, $X = $ Anzahl Erfolge, $X \\in \\{0, 1, \\ldots, n\\}$.<br><br>Bernoulli ist Spezialfall: $\\text{Bin}(1, p) = \\text{Bernoulli}(p)$.<br><br>$E[X] = np$, $\\mathrm{Var}(X) = np(1-p)$."
+    },
+    {
+      "id": "sw04-02",
+      "week": "SW04",
+      "topic": "Modelle für zufällige Ereignisse",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Wann verwendet man die <b>Poisson-Verteilung</b>?",
+      "back": "Für die <b>Anzahl seltener Ereignisse</b> in einem festen Intervall (Zeit, Raum), wenn die Ereignisse unabhängig sind und mit konstanter Rate $\\lambda$ auftreten.<br><br><b>Beispiele:</b> Anzahl Kundenanrufe pro Stunde, Druckfehler pro Seite, radioaktive Zerfälle pro Sekunde.<br><br>$E[X] = \\lambda$, $\\mathrm{Var}(X) = \\lambda$ (bemerkenswert!)."
+    },
+    {
+      "id": "sw04-03",
+      "week": "SW04",
+      "topic": "Modelle für zufällige Ereignisse",
+      "category": "Begriff",
+      "difficulty": "medium",
+      "front": "Was ist der Unterschied zwischen <b>PMF</b> und <b>PDF</b>?",
+      "back": "<b>PMF</b> (Probability Mass Function) – für <b>diskrete</b> Zufallsvariablen: $f(k) = P(X = k)$. Werte $\\geq 0$, Summe = 1.<br><br><b>PDF</b> (Probability Density Function) – für <b>stetige</b> Zufallsvariablen: $f(x)$ = Dichte. Werte $\\geq 0$, Integral = 1.<br><br><b>Falle:</b> Bei stetigen Verteilungen ist $P(X = c) = 0$ – nur Intervalle haben positive Wahrscheinlichkeit."
+    },
+    {
+      "id": "sw04-04",
+      "week": "SW04",
+      "topic": "Modelle für zufällige Ereignisse",
+      "category": "Code",
+      "difficulty": "medium",
+      "front": "Was machen <code>binom.pmf(k, n, p)</code>, <code>binom.cdf(k, n, p)</code>, <code>binom.ppf(q, n, p)</code> und <code>binom.rvs(n, p, size=N)</code>?",
+      "back": "<code>pmf(k)</code> – $P(X = k)$, einzelne Wahrscheinlichkeit.<br><br><code>cdf(k)</code> – $P(X \\leqslant k)$, kumulative Verteilungsfunktion.<br><br><code>ppf(q)</code> – <b>inverse CDF</b>: kleinstes $k$ mit $P(X \\leqslant k) \\geqslant q$ ($q$-Quantil).<br><br><code>rvs(size=N)</code> – $N$ <b>Zufallszahlen</b> aus der Verteilung (Simulation)."
+    },
+    {
+      "id": "sw04-05",
+      "week": "SW04",
+      "topic": "Modelle für zufällige Ereignisse",
+      "category": "Falle",
+      "difficulty": "hard",
+      "front": "Bei diskreter Verteilung: $P(a \\leqslant X \\leqslant b) = $ ?",
+      "back": "$$P(a \\leqslant X \\leqslant b) = F(b) - F(a-1)$$<br>(also <code>cdf(b) - cdf(a-1)</code>)<br><br><b>Falle:</b> <code>cdf(b) - cdf(a)</code> wäre $P(a < X \\leqslant b)$, schliesst $X = a$ aus!<br><br>Bei <b>stetigen</b> Verteilungen ist es egal, weil $P(X = a) = 0$. Bei diskreten Verteilungen muss man genau aufpassen, ob $\\leqslant$ oder $<$."
+    },
+    {
+      "id": "sw04-06",
+      "week": "SW04",
+      "topic": "Modelle für zufällige Ereignisse",
+      "category": "Formel",
+      "difficulty": "hard",
+      "front": "PMF der Binomialverteilung?",
+      "back": "$$P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k}$$<br><br>$\\binom{n}{k} = \\frac{n!}{k! (n-k)!}$ = Anzahl Möglichkeiten, $k$ aus $n$ zu wählen.<br><br>$p^k$ = Wahrscheinlichkeit für $k$ Erfolge.<br>$(1-p)^{n-k}$ = Wahrscheinlichkeit für die restlichen $n - k$ Misserfolge."
+    },
+    {
+      "id": "sw04-07",
+      "week": "SW04",
+      "topic": "Modelle für zufällige Ereignisse",
+      "category": "Begriff",
+      "difficulty": "easy",
+      "front": "Was ist die <b>kumulative Verteilungsfunktion</b> (CDF)?",
+      "back": "$$F(x) = P(X \\leqslant x)$$<br><br>Eigenschaften:<br>– monoton steigend von 0 bis 1<br>– bei diskret: Treppenfunktion<br>– bei stetig: glatte Kurve<br><br>$P(a < X \\leqslant b) = F(b) - F(a)$."
+    },
+    {
+      "id": "sw04-08",
+      "week": "SW04",
+      "topic": "Modelle für zufällige Ereignisse",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Was charakterisiert die <b>Normalverteilung</b> $\\mathcal{N}(\\mu, \\sigma^2)$?",
+      "back": "Symmetrische, glockenförmige Dichtefunktion mit Mittelwert $\\mu$ und Standardabweichung $\\sigma$.<br><br><b>68-95-99.7-Regel:</b><br>– 68 % der Werte in $[\\mu \\pm \\sigma]$<br>– 95 % in $[\\mu \\pm 2\\sigma]$<br>– 99.7 % in $[\\mu \\pm 3\\sigma]$<br><br>Standardnormal: $\\mu = 0$, $\\sigma = 1$. Wichtig wegen Zentralem Grenzwertsatz."
+    },
+    {
+      "id": "sw04-09",
+      "week": "SW04",
+      "topic": "Modelle für zufällige Ereignisse",
+      "category": "Falle",
+      "difficulty": "medium",
+      "front": "Warum ist $P(X = c) = 0$ bei stetigen Verteilungen?",
+      "back": "Bei stetigen Verteilungen ist die Wahrscheinlichkeit über ein <b>Integral</b> definiert: $P(a \\leqslant X \\leqslant b) = \\int_a^b f(x)\\,dx$.<br><br>Ein einzelner Punkt hat Länge 0 → Integral über einen Punkt = 0.<br><br><b>Folge:</b> $P(X \\leqslant c) = P(X < c)$ – bei stetigen Verteilungen <b>egal</b>, ob mit oder ohne Gleichheitszeichen.<br><br>Bei diskreten Verteilungen ist das <b>nicht</b> egal!"
+    },
+    {
+      "id": "sw04-10",
+      "week": "SW04",
+      "topic": "Modelle für zufällige Ereignisse",
+      "category": "Formel",
+      "difficulty": "easy",
+      "front": "Erwartungswert und Varianz der Binomialverteilung?",
+      "back": "$$E[X] = n p$$<br><br>$$\\mathrm{Var}(X) = n p (1-p)$$<br><br>Bei $X \\sim \\text{Bin}(20, 0.3)$: $E[X] = 6$, $\\mathrm{Var}(X) = 4.2$, $\\sigma \\approx 2.05$."
+    },
+    {
+      "id": "sw05-01",
+      "week": "SW05",
+      "topic": "Stichproben",
+      "category": "Begriff",
+      "difficulty": "easy",
+      "front": "Unterschied <b>Grundgesamtheit</b> vs. <b>Stichprobe</b>?",
+      "back": "<b>Grundgesamtheit (Population):</b> alle relevanten Einheiten, über die wir Aussagen treffen wollen (z.B. alle Schweizer).<br><br><b>Stichprobe:</b> die tatsächlich beobachtete Teilmenge (z.B. 1000 zufällig ausgewählte Personen).<br><br>Ziel der Statistik: aus der Stichprobe Rückschlüsse auf die Grundgesamtheit ziehen (Inferenz)."
+    },
+    {
+      "id": "sw05-02",
+      "week": "SW05",
+      "topic": "Stichproben",
+      "category": "Falle",
+      "difficulty": "hard",
+      "front": "Was war das <b>Literary Digest Desaster</b> 1936 und welche Lehre folgt daraus?",
+      "back": "Die Zeitschrift Literary Digest befragte 2.4 Mio. Personen zur US-Präsidentschaftswahl und prognostizierte <b>Landon</b> als Sieger – tatsächlich gewann <b>Roosevelt</b> deutlich.<br><br><b>Problem:</b> Die Stichprobe wurde aus Telefon- und Auto-Besitzerlisten gezogen → systematische Verzerrung Richtung wohlhabendere Wähler (Auswahlverzerrung).<br><br><b>Lehre:</b> Eine kleine, <b>repräsentative</b> Stichprobe ist viel wertvoller als eine grosse, verzerrte. Gallup machte es mit 50 000 Interviews richtig."
+    },
+    {
+      "id": "sw05-03",
+      "week": "SW05",
+      "topic": "Stichproben",
+      "category": "Konzept",
+      "difficulty": "hard",
+      "front": "Unterschied <b>Datenverteilung</b> vs. <b>Stichprobenverteilung</b>?",
+      "back": "<b>Datenverteilung:</b> Verteilung der einzelnen Beobachtungen $x_1, \\ldots, x_n$ – kann beliebig schief, mehrgipflig, mit Ausreissern sein.<br><br><b>Stichprobenverteilung</b> (z.B. des Mittelwerts): Verteilung der Statistik $\\bar{X}$ über alle möglichen Stichproben gleicher Grösse.<br><br><b>Wichtig:</b> Mit grösserem $n$ wird die Stichprobenverteilung schmaler (SE = $\\sigma/\\sqrt{n}$) und nähert sich einer Normalverteilung an (CLT) – auch wenn die Datenverteilung selbst nicht normal ist."
+    },
+    {
+      "id": "sw05-04",
+      "week": "SW05",
+      "topic": "Stichproben",
+      "category": "Formel",
+      "difficulty": "medium",
+      "front": "Formel für den <b>Standardfehler des Mittelwerts</b>?",
+      "back": "$$\\sigma_{\\bar{x}} = \\frac{\\sigma}{\\sqrt{n}}$$<br><br>(geschätzt: $\\hat\\sigma_{\\bar{x}} = s / \\sqrt{n}$ mit Stichproben-Std $s$)<br><br><b>Konsequenz:</b> Verdoppelung von $n$ reduziert den Standardfehler nur um Faktor $1/\\sqrt{2} \\approx 0.71$, nicht um die Hälfte!<br><br>Vierfachung von $n$ → Halbierung von $\\sigma_{\\bar{x}}$."
+    },
+    {
+      "id": "sw05-05",
+      "week": "SW05",
+      "topic": "Stichproben",
+      "category": "Begriff",
+      "difficulty": "medium",
+      "front": "Was ist eine <b>geschichtete Stichprobe</b> (stratified sample)?",
+      "back": "Die Grundgesamtheit wird in <b>Schichten</b> (Strata) aufgeteilt (z.B. nach Region, Alter, Geschlecht), und aus jeder Schicht wird separat eine Stichprobe gezogen – idealerweise proportional zur Schichtgrösse.<br><br><b>Vorteil:</b> Garantiert Repräsentation aller Untergruppen, reduziert Varianz der Schätzer.<br><br>Beispiel: bei einer nationalen Umfrage in jeder Sprachregion einzeln ziehen."
+    },
+    {
+      "id": "sw05-06",
+      "week": "SW05",
+      "topic": "Stichproben",
+      "category": "Falle",
+      "difficulty": "medium",
+      "front": "<b>Auswahlverzerrung</b> vs. <b>Stichprobenverzerrung</b> – was ist der Unterschied?",
+      "back": "<b>Auswahlverzerrung (Selection Bias):</b> systematischer Fehler beim Ziehen – bestimmte Gruppen sind über- oder unterrepräsentiert (z.B. nur Telefonbesitzer).<br><br><b>Stichprobenverzerrung (Sampling Variability):</b> rein zufällige Schwankung – jede Stichprobe ist anders, weil man nur einen Teil sieht.<br><br><b>Wichtig:</b> Auswahlverzerrung wird durch grössere Stichproben <b>nicht</b> behoben! Sie ist ein Designfehler."
+    },
+    {
+      "id": "sw06-01",
+      "week": "SW06",
+      "topic": "Schätzverfahren & Bootstrap",
+      "category": "Konzept",
+      "difficulty": "hard",
+      "front": "Formulieren Sie den <b>Zentralen Grenzwertsatz</b> in eigenen Worten.",
+      "back": "Für $X_1, \\ldots, X_n$ unabhängig und identisch verteilt mit Mittelwert $\\mu$ und endlicher Varianz $\\sigma^2$ konvergiert die Verteilung von $\\sqrt{n}(\\bar{X}_n - \\mu)/\\sigma$ mit $n \\to \\infty$ gegen $\\mathcal{N}(0, 1)$.<br><br><b>Ohne Formel:</b> Mittelwerte aus genug grossen Stichproben sind <b>annähernd normalverteilt</b> – egal, wie schief die Originalverteilung ist.<br><br><b>Faustregel:</b> $n \\geqslant 30$. Bei sehr schiefen Daten braucht es mehr."
+    },
+    {
+      "id": "sw06-02",
+      "week": "SW06",
+      "topic": "Schätzverfahren & Bootstrap",
+      "category": "Begriff",
+      "difficulty": "medium",
+      "front": "Was ist ein <b>Bootstrap-Resample</b>?",
+      "back": "Eine zufällige Stichprobe der gleichen Grösse $n$ aus den eigenen Daten, gezogen <b>mit Zurücklegen</b>.<br><br>Manche Werte erscheinen mehrfach, andere gar nicht (durchschnittlich ~63 % der Originalwerte).<br><br>Python: <code>df.sample(n, replace=True)</code><br><br><b>Idee:</b> Die Stichprobe ist unsere beste Annäherung an die Grundgesamtheit – durch Resampling simulieren wir 'neue Stichproben'."
+    },
+    {
+      "id": "sw06-03",
+      "week": "SW06",
+      "topic": "Schätzverfahren & Bootstrap",
+      "category": "Falle",
+      "difficulty": "hard",
+      "front": "Was bedeutet ein <b>95%-Konfidenzintervall</b> wirklich?",
+      "back": "<b>Korrekt:</b> 'Wenn man das Experiment sehr oft wiederholt, würden 95 % der so berechneten Intervalle den wahren Parameter $\\mu$ enthalten.'<br><br><b>Falsch:</b> 'Mit 95 % Wahrscheinlichkeit liegt $\\mu$ in [a, b]'.<br><br><b>Warum?</b> $\\mu$ ist ein <b>fester</b> (unbekannter) Wert. Das Intervall ist zufällig (hängt von der Stichprobe ab). Ein konkretes Intervall enthält $\\mu$ <b>entweder oder eben nicht</b>.<br><br>Die '95 %' beschreibt die Trefferquote der <b>Methode</b>, nicht eines einzelnen Intervalls."
+    },
+    {
+      "id": "sw06-04",
+      "week": "SW06",
+      "topic": "Schätzverfahren & Bootstrap",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Wie berechnet man ein <b>Bootstrap-Konfidenzintervall</b>?",
+      "back": "1. Aus den Daten $n$-mal <b>mit Zurücklegen</b> resamplen (z.B. 1000 Resamples).<br>2. Pro Resample die gewünschte Statistik berechnen ($\\bar{X}^{(k)}$, $r^{(k)}$, …).<br>3. Aus den 1000 Werten die Quantile $Q_{2.5\\%}$ und $Q_{97.5\\%}$ als Intervallgrenzen nehmen.<br><br>Python: <code>np.quantile(samples, [0.025, 0.975])</code><br><br><b>Vorteil:</b> Verteilungsfrei – funktioniert auch ohne Normalverteilungsannahme."
+    },
+    {
+      "id": "sw06-05",
+      "week": "SW06",
+      "topic": "Schätzverfahren & Bootstrap",
+      "category": "Begriff",
+      "difficulty": "medium",
+      "front": "Was bedeutet <b>erwartungstreu</b> (unbiased)?",
+      "back": "Ein Schätzer $\\hat\\theta$ heisst erwartungstreu für $\\theta$, wenn $E[\\hat\\theta] = \\theta$ – im Mittel über alle möglichen Stichproben trifft er den wahren Wert.<br><br><b>Beispiele:</b><br>– $\\bar{X}$ ist erwartungstreu für $\\mu$.<br>– $s^2 = \\frac{1}{n-1}\\sum(x_i - \\bar{x})^2$ ist erwartungstreu für $\\sigma^2$ (mit ddof=1).<br>– $\\frac{1}{n}\\sum(x_i - \\bar{x})^2$ ist <b>nicht</b> erwartungstreu (unterschätzt systematisch)."
+    },
+    {
+      "id": "sw06-06",
+      "week": "SW06",
+      "topic": "Schätzverfahren & Bootstrap",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Wann verwendet man die <b>$t$-Verteilung</b> statt der Normalverteilung?",
+      "back": "Wenn die Standardabweichung $\\sigma$ <b>unbekannt</b> ist und durch die Stichproben-Std $s$ ersetzt werden muss.<br><br>Typische Situation: kleine Stichprobe ($n < 30$), Konfidenzintervall für $\\mu$:<br>$$\\bar{x} \\pm t_{1-\\alpha/2,\\,n-1} \\cdot \\frac{s}{\\sqrt{n}}$$<br><br><b>Eigenschaft:</b> $t$-Verteilung hat schwerere Tails → breitere Intervalle. Bei $n \\to \\infty$ konvergiert sie gegen die Normalverteilung."
+    },
+    {
+      "id": "sw06-07",
+      "week": "SW06",
+      "topic": "Schätzverfahren & Bootstrap",
+      "category": "Konzept",
+      "difficulty": "easy",
+      "front": "Wie verändert sich ein 99%-CI im Vergleich zu einem 95%-CI?",
+      "back": "Das 99%-CI ist <b>breiter</b>: höhere Sicherheit erfordert grösseren Bereich.<br><br>$z_{0.975} = 1.96$ (für 95 %)<br>$z_{0.995} = 2.58$ (für 99 %)<br><br>→ 99%-CI ist ca. $2.58/1.96 \\approx 1.32$-mal breiter als 95%-CI.<br><br><b>Trade-off:</b> Sicherheit ↑, Präzision ↓."
+    },
+    {
+      "id": "sw06-08",
+      "week": "SW06",
+      "topic": "Schätzverfahren & Bootstrap",
+      "category": "Begriff",
+      "difficulty": "medium",
+      "front": "Unterschied <b>Punktschätzer</b> vs. <b>Intervallschätzer</b>?",
+      "back": "<b>Punktschätzer:</b> ein einzelner Wert als 'beste Schätzung' (z.B. $\\bar{x} = 12.3$).<br><br><b>Intervallschätzer:</b> ein Bereich plausibler Werte mit angegebener Konfidenz (z.B. $[11.4, 13.2]$ mit 95 %).<br><br>Der Intervallschätzer berücksichtigt die <b>Unsicherheit</b> – ein Punktschätzer allein verschleiert sie."
+    },
+    {
+      "id": "sw07-01",
+      "week": "SW07",
+      "topic": "Hypothesentests mit Resampling",
+      "category": "Begriff",
+      "difficulty": "easy",
+      "front": "Was sind <b>Nullhypothese</b> $H_0$ und <b>Alternativhypothese</b> $H_1$?",
+      "back": "<b>$H_0$:</b> Status-Quo, 'kein Effekt', 'kein Unterschied' – das, was wir testen wollen, indem wir es <b>zu widerlegen</b> versuchen.<br><br><b>$H_1$:</b> die Aussage, die wir <b>zeigen</b> wollen – Gegenteil von $H_0$.<br><br><b>Beispiel:</b><br>$H_0$: $\\mu_A = \\mu_B$ (kein Unterschied).<br>$H_1$: $\\mu_A \\neq \\mu_B$ (es gibt einen Unterschied)."
+    },
+    {
+      "id": "sw07-02",
+      "week": "SW07",
+      "topic": "Hypothesentests mit Resampling",
+      "category": "Falle",
+      "difficulty": "hard",
+      "front": "Welche Definition des <b>p-Werts</b> ist korrekt?",
+      "back": "<b>Korrekt:</b> Wahrscheinlichkeit, ein Resultat <b>mindestens so extrem</b> wie das beobachtete zu erhalten, <b>falls $H_0$ wahr wäre</b>.<br><br><b>Häufig falsch:</b><br>– 'Wahrscheinlichkeit, dass $H_0$ wahr ist.' ❌<br>– 'Wahrscheinlichkeit, dass das Ergebnis Zufall ist.' ❌<br>– 'Wahrscheinlichkeit, sich zu irren.' ❌<br><br>Der p-Wert sagt nur etwas über die <b>Daten unter $H_0$</b>, nicht über die Wahrheit von $H_0$ selbst."
+    },
+    {
+      "id": "sw07-03",
+      "week": "SW07",
+      "topic": "Hypothesentests mit Resampling",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Wie funktioniert ein <b>Permutationstest</b> auf Mittelwertsdifferenz?",
+      "back": "1. Beobachtete Statistik berechnen, z.B. $\\Delta_{obs} = \\bar{X}_A - \\bar{X}_B$.<br>2. Beide Gruppen <b>zusammenwerfen</b> in einen Pool.<br>3. Zufällig <b>ohne Zurücklegen</b> umverteilen, neue Differenz berechnen.<br>4. Schritte 2–3 viele Male (z.B. 10 000) wiederholen → Permutationsverteilung unter $H_0$.<br>5. p-Wert = Anteil der Permutationen mit $|\\Delta^{(k)}| \\geqslant |\\Delta_{obs}|$.<br><br><b>Idee:</b> Unter $H_0$ ist die Gruppenzugehörigkeit egal."
+    },
+    {
+      "id": "sw07-04",
+      "week": "SW07",
+      "topic": "Hypothesentests mit Resampling",
+      "category": "Begriff",
+      "difficulty": "easy",
+      "front": "Was sind <b>Typ-I-</b> und <b>Typ-II-Fehler</b>?",
+      "back": "<b>Typ-I-Fehler:</b> $H_0$ verwerfen, obwohl $H_0$ wahr ist (falscher Alarm). Wahrscheinlichkeit = $\\alpha$ (Signifikanzniveau).<br><br><b>Typ-II-Fehler:</b> $H_0$ beibehalten, obwohl $H_1$ wahr ist (Effekt übersehen). Wahrscheinlichkeit = $\\beta$.<br><br><b>Power</b> = $1 - \\beta$ = Wahrscheinlichkeit, einen echten Effekt zu erkennen.<br><br><b>Trade-off:</b> $\\alpha$ kleiner machen → $\\beta$ tendenziell grösser."
+    },
+    {
+      "id": "sw07-05",
+      "week": "SW07",
+      "topic": "Hypothesentests mit Resampling",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Permutationstest vs. Bootstrap-Test – wann was?",
+      "back": "<b>Permutationstest:</b> testet $H_0$ direkt durch Umordnen der Labels (ohne Zurücklegen). Ideal für Vergleich von Gruppen / Korrelationstests.<br><br><b>Bootstrap-Test:</b> simuliert die Stichprobenverteilung der Statistik durch Resampling (mit Zurücklegen). Ideal für Konfidenzintervalle und 'verteilungsfreie' Inferenz.<br><br><b>Kernunterschied:</b> Permutation = ohne Zurücklegen, Bootstrap = mit Zurücklegen."
+    },
+    {
+      "id": "sw07-06",
+      "week": "SW07",
+      "topic": "Hypothesentests mit Resampling",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Wann <b>einseitig</b>, wann <b>zweiseitig</b> testen?",
+      "back": "<b>Einseitig:</b> Wenn die Frage nur eine Richtung interessiert (z.B. 'wirkt das Medikament <b>besser</b> als Placebo?'). $H_1: \\mu_A > \\mu_B$.<br><br><b>Zweiseitig:</b> Wenn jede Abweichung relevant ist (z.B. 'unterscheiden sich die Gruppen?'). $H_1: \\mu_A \\neq \\mu_B$.<br><br><b>Faustregel:</b> Im Zweifel <b>zweiseitig</b> – konservativer und ehrlicher. Einseitig nur, wenn fachlich begründet vor der Datenauswertung."
+    },
+    {
+      "id": "sw07-07",
+      "week": "SW07",
+      "topic": "Hypothesentests mit Resampling",
+      "category": "Falle",
+      "difficulty": "hard",
+      "front": "Bedeutet <b>$p > 0.05$</b>, dass $H_0$ wahr ist?",
+      "back": "<b>Nein!</b> $p > 0.05$ heisst nur, dass wir <b>nicht genug Evidenz</b> haben, um $H_0$ zu verwerfen.<br><br>Mögliche Gründe:<br>– $H_0$ ist tatsächlich wahr (oder annähernd).<br>– Effekt existiert, aber Stichprobe zu klein, um ihn zu erkennen (Power-Problem).<br>– Daten sind zu verrauscht.<br><br><b>Merksatz:</b> 'Absence of evidence is not evidence of absence.'"
+    },
+    {
+      "id": "sw07-08",
+      "week": "SW07",
+      "topic": "Hypothesentests mit Resampling",
+      "category": "Begriff",
+      "difficulty": "easy",
+      "front": "Was ist das <b>Signifikanzniveau</b> $\\alpha$?",
+      "back": "Vorab gewählte Schwelle für den p-Wert, ab der $H_0$ verworfen wird.<br><br>Übliche Werte: $\\alpha = 0.05$ (5 %), $0.01$ (1 %), $0.001$ (0.1 %).<br><br>$\\alpha$ = Wahrscheinlichkeit eines Typ-I-Fehlers (falscher Alarm).<br><br><b>Wichtig:</b> $\\alpha$ wird <b>vor</b> der Analyse festgelegt – nicht nachträglich anpassen!"
+    },
+    {
+      "id": "sw08-01",
+      "week": "SW08",
+      "topic": "ANOVA & Chi-Quadrat",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Wofür wird <b>ANOVA</b> verwendet?",
+      "back": "ANOVA = Analysis Of Variance – Vergleich von Mittelwerten in <b>3 oder mehr Gruppen</b> in einem einzigen Test.<br><br><b>Idee:</b> Vergleicht Varianz <i>zwischen</i> den Gruppen mit Varianz <i>innerhalb</i> der Gruppen.<br><br>$H_0$: alle Gruppenmittelwerte gleich.<br>$H_1$: mindestens ein Mittelwert unterscheidet sich.<br><br><b>Vorteil gegenüber paarweisen t-Tests:</b> kontrolliert das gesamte $\\alpha$-Niveau – sonst Multiples-Testen-Problem."
+    },
+    {
+      "id": "sw08-02",
+      "week": "SW08",
+      "topic": "ANOVA & Chi-Quadrat",
+      "category": "Falle",
+      "difficulty": "medium",
+      "front": "Warum <b>nicht</b> einfach paarweise $t$-Tests bei vielen Gruppen?",
+      "back": "Bei $k$ Gruppen gibt es $\\binom{k}{2} = k(k-1)/2$ Paare. Bei jedem Paar-Test ist die Wahrscheinlichkeit eines Typ-I-Fehlers $\\alpha$.<br><br>Bei 5 Gruppen: 10 Tests → Wahrscheinlichkeit für mindestens einen falschen Alarm ist ca. $1 - (1 - 0.05)^{10} \\approx 40\\%$!<br><br><b>Lösung:</b> ANOVA testet alles in einem Schritt mit insgesamt $\\alpha = 0.05$. Anschliessend ggf. Bonferroni-korrigierte paarweise Tests."
+    },
+    {
+      "id": "sw08-03",
+      "week": "SW08",
+      "topic": "ANOVA & Chi-Quadrat",
+      "category": "Begriff",
+      "difficulty": "medium",
+      "front": "Was zeigt ein <b>Q-Q-Plot</b>?",
+      "back": "Quantile-Quantile-Plot: vergleicht die <b>empirischen Quantile</b> der Daten mit den <b>theoretischen Quantilen</b> einer Referenzverteilung (meist Normal).<br><br>Punkte auf der Diagonalen → Daten passen zur Verteilung.<br><br><b>Lesehilfe:</b><br>– Punkte fliegen am Ende nach oben → schwerer rechter Tail.<br>– S-Form → Daten konzentrierter als Normal.<br>– Knick → Schiefe."
+    },
+    {
+      "id": "sw08-04",
+      "week": "SW08",
+      "topic": "ANOVA & Chi-Quadrat",
+      "category": "Formel",
+      "difficulty": "medium",
+      "front": "Formel für die <b>$\\chi^2$-Teststatistik</b>?",
+      "back": "$$\\chi^2 = \\sum_{\\text{Zellen}} \\frac{(n_b - n_e)^2}{n_e}$$<br><br>$n_b$ = beobachtete Häufigkeit in der Zelle.<br>$n_e$ = erwartete Häufigkeit unter $H_0$.<br><br>Pro Zelle berechnet man das <b>Pearson-Residuum</b>: $\\frac{(n_b - n_e)^2}{n_e}$.<br><br><b>Idee:</b> normierter Beitrag jeder Zelle – grosse Abweichungen werden relativ zu $n_e$ gewichtet."
+    },
+    {
+      "id": "sw08-05",
+      "week": "SW08",
+      "topic": "ANOVA & Chi-Quadrat",
+      "category": "Code",
+      "difficulty": "medium",
+      "front": "Wie berechnet man die <b>erwarteten Häufigkeiten</b> $n_e$ in einer Kontingenztafel?",
+      "back": "Unter $H_0$ (Unabhängigkeit) gilt:<br>$$n_e(i, j) = \\frac{n_i^{\\text{Zeile}} \\cdot n_j^{\\text{Spalte}}}{n}$$<br><br>= (Zeilensumme × Spaltensumme) / Gesamtsumme.<br><br>Python:<br><code>n_e = np.outer(zeilensummen, spaltensummen) / n</code>"
+    },
+    {
+      "id": "sw09-01",
+      "week": "SW09",
+      "topic": "Zusammenhangsanalyse (nominal)",
+      "category": "Begriff",
+      "difficulty": "easy",
+      "front": "Was ist eine <b>Kontingenztafel</b>?",
+      "back": "Eine zweidimensionale Häufigkeitstabelle für zwei kategoriale Merkmale: Zeilen = Kategorien des einen Merkmals, Spalten = Kategorien des anderen, Zellen = beobachtete Häufigkeiten.<br><br><b>Randverteilung:</b> Zeilen- und Spaltensummen.<br><br>Python: <code>pd.crosstab(df[\"A\"], df[\"B\"])</code>"
+    },
+    {
+      "id": "sw09-02",
+      "week": "SW09",
+      "topic": "Zusammenhangsanalyse (nominal)",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Wann gilt <b>Unabhängigkeit</b> in einer Kontingenztafel?",
+      "back": "Wenn die <b>Produktregel</b> für relative Häufigkeiten gilt:<br><br>$$h(a_i, b_j) = h(a_i) \\cdot h(b_j) \\quad \\forall i, j$$<br><br>= relative gemeinsame Häufigkeit ist Produkt der Randhäufigkeiten.<br><br>Äquivalent: Bei voll geschichteten Stabdiagrammen sind alle Stapel <b>identisch</b> – die Verteilung von $B$ hängt nicht von $A$ ab."
+    },
+    {
+      "id": "sw09-03",
+      "week": "SW09",
+      "topic": "Zusammenhangsanalyse (nominal)",
+      "category": "Formel",
+      "difficulty": "hard",
+      "front": "Formel für den <b>korrigierten Kontingenzkoeffizient</b> $C_{\\text{korr}}$?",
+      "back": "$$C_{\\text{korr}} = \\sqrt{\\frac{C_{\\max} + 1}{C_{\\max}}} \\cdot \\sqrt{\\frac{\\chi^2}{\\chi^2 + n}}$$<br><br>mit $C_{\\max} = \\min(\\text{Zeilen}, \\text{Spalten}) - 1$.<br><br>Wertebereich: $[0, 1]$.<br>– $C_{\\text{korr}} = 0$: Unabhängigkeit.<br>– $C_{\\text{korr}} = 1$: maximale Abhängigkeit (in dieser Tafelgrösse).<br><br>Bei einer 2×3-Tafel: $C_{\\max} = \\min(2,3) - 1 = 1$."
+    },
+    {
+      "id": "sw09-04",
+      "week": "SW09",
+      "topic": "Zusammenhangsanalyse (nominal)",
+      "category": "Falle",
+      "difficulty": "hard",
+      "front": "Bedeutet $C_{\\text{korr}} = 0.6$, dass 60 % der Variation 'erklärt' wird?",
+      "back": "<b>Nein!</b> $C_{\\text{korr}}$ ist <b>kein Prozentsatz</b> erklärter Varianz wie $R^2$.<br><br>Es ist eine <b>normierte Stärke</b> des Zusammenhangs zwischen 0 (keine) und 1 (maximal in dieser Tafelgrösse).<br><br>Ein direkter Vergleich mit Pearson-$r$ oder $R^2$ ist nicht zulässig – andere Skala, andere Interpretation.<br><br><b>Faustregel für nominale Daten:</b> $> 0.3$ = bemerkenswert, $> 0.5$ = stark."
+    },
+    {
+      "id": "sw09-05",
+      "week": "SW09",
+      "topic": "Zusammenhangsanalyse (nominal)",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Welche Visualisierung passt zu einer Kontingenztafel?",
+      "back": "<b>Gestapeltes Stabdiagramm</b> mit relativen Häufigkeiten:<br>– Pro Kategorie der $x$-Achse ein Balken der Höhe 1.<br>– Innerhalb des Balkens Stapelung nach Kategorien des anderen Merkmals.<br><br><b>Lesehilfe:</b> Wenn alle Stapel <b>gleich</b> aussehen → Unabhängigkeit. Unterschiedliche Stapel → Zusammenhang.<br><br>Python: <code>pd.crosstab(...).apply(lambda x: x/x.sum(), axis=1).plot.bar(stacked=True)</code>"
+    },
+    {
+      "id": "sw10-01",
+      "week": "SW10",
+      "topic": "Korrelation & Kausalität",
+      "category": "Formel",
+      "difficulty": "medium",
+      "front": "Formel für den <b>Pearson-Korrelationskoeffizient</b> $r$?",
+      "back": "$$r = \\frac{\\sigma_{ab}}{\\sigma_a \\cdot \\sigma_b} = \\frac{\\sum (a_i - \\bar{a})(b_i - \\bar{b})}{\\sqrt{\\sum (a_i - \\bar{a})^2} \\cdot \\sqrt{\\sum (b_i - \\bar{b})^2}}$$<br><br>Eigenschaften:<br>– $-1 \\leqslant r \\leqslant 1$<br>– dimensionslos<br>– misst <b>linearen</b> Zusammenhang"
+    },
+    {
+      "id": "sw10-02",
+      "week": "SW10",
+      "topic": "Korrelation & Kausalität",
+      "category": "Begriff",
+      "difficulty": "medium",
+      "front": "Was ist die <b>Kovarianz</b> $\\sigma_{ab}$?",
+      "back": "$$\\sigma_{ab} = \\frac{1}{n} \\sum (a_i - \\bar{a})(b_i - \\bar{b})$$<br><br>Mittelwert der Produkte der zentrierten Abweichungen.<br><br>– Positiv: $A$ und $B$ tendieren in dieselbe Richtung (positive Korrelation).<br>– Negativ: gegenläufige Tendenz (negative Korrelation).<br>– Null: kein linearer Zusammenhang.<br><br><b>Problem:</b> Einheit ist $[A] \\cdot [B]$ – nicht direkt vergleichbar. Daher Normierung zu $r$."
+    },
+    {
+      "id": "sw10-03",
+      "week": "SW10",
+      "topic": "Korrelation & Kausalität",
+      "category": "Falle",
+      "difficulty": "hard",
+      "front": "Bedeutet $r = 0$, dass $A$ und $B$ <b>unabhängig</b> sind?",
+      "back": "<b>Nein!</b> $r = 0$ bedeutet nur <b>kein linearer Zusammenhang</b>.<br><br>Es können trotzdem starke <b>nicht-lineare</b> Abhängigkeiten existieren:<br>– $B = A^2$ (Parabel) → $r \\approx 0$, aber $B$ ist deterministisch durch $A$ bestimmt.<br>– Punkte auf einem Kreis → $r = 0$, aber klar abhängig.<br>– Sinuskurve → $r \\approx 0$.<br><br><b>Merksatz:</b> $r = 0$ heisst 'keine Gerade passt', nicht 'keine Beziehung'."
+    },
+    {
+      "id": "sw10-04",
+      "week": "SW10",
+      "topic": "Korrelation & Kausalität",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Wann <b>Spearman</b> statt Pearson?",
+      "back": "1. Mindestens ein Merkmal nur <b>ordinal</b> (z.B. Schulnoten).<br>2. Daten haben starke <b>Ausreisser</b> – Spearman robuster (rangbasiert).<br>3. Zusammenhang ist <b>monoton, aber nicht linear</b> (z.B. exponentiell). Pearson unterschätzt, Spearman erkennt.<br><br>Python: <code>df.corr(method=\"spearman\")</code><br><br><b>Mechanik:</b> Pearson auf Rangzahlen statt auf Werten."
+    },
+    {
+      "id": "sw10-05",
+      "week": "SW10",
+      "topic": "Korrelation & Kausalität",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Was ist eine <b>Bindung</b> bei Spearman, und wie wird sie behandelt?",
+      "back": "<b>Bindung (Tie):</b> mehrere Werte sind gleich → würden eigentlich denselben Rang teilen.<br><br><b>Behandlung:</b> Allen werden das <b>arithmetische Mittel</b> der betreffenden Rangplätze zugewiesen.<br><br><b>Beispiel:</b> 6 Werte 'gut' an Positionen 2–7 → alle bekommen Rang $(2+3+4+5+6+7)/6 = 4.5$.<br><br>In Python: <code>series.rank()</code> macht das automatisch."
+    },
+    {
+      "id": "sw10-06",
+      "week": "SW10",
+      "topic": "Korrelation & Kausalität",
+      "category": "Falle",
+      "difficulty": "hard",
+      "front": "Drei Hauptursachen für eine <b>Scheinkorrelation</b>?",
+      "back": "1. <b>Confounder</b> (dritte Variable): Eisverkauf × Sonnenbrand ← Sommer.<br><br>2. <b>Umgekehrte Wirkungsrichtung:</b> Regenschirme × Regen → Regen verursacht Schirme, nicht umgekehrt.<br><br>3. <b>Zufall / kleine Stichprobe / Selection Bias:</b> Tyler Vigens 'Spurious Correlations' (Scheidungsrate × Margarine-Konsum mit $r > 0.99$).<br><br><b>Konsequenz:</b> Korrelation ≠ Kausalität – immer im Kontext und mit Fachwissen interpretieren."
+    },
+    {
+      "id": "sw10-07",
+      "week": "SW10",
+      "topic": "Korrelation & Kausalität",
+      "category": "Falle",
+      "difficulty": "medium",
+      "front": "Sagt $|r|$ etwas über die <b>Steigung</b> der Regressionsgerade aus?",
+      "back": "<b>Nein!</b> $|r|$ misst nur die <b>Güte</b> der linearen Anpassung (wie nahe die Punkte an einer Geraden liegen).<br><br>Die Steigung folgt aus:<br>$$\\hat{a} = r \\cdot \\frac{\\sigma_y}{\\sigma_x}$$<br><br>Datensätze mit $r = 0.95$ können sehr unterschiedliche Steigungen haben – je nach Streuung in $X$ und $Y$.<br><br>Eine perfekt waagerechte oder steile Gerade haben beide $|r| = 1$, sofern keine Streuung."
+    },
+    {
+      "id": "sw10-08",
+      "week": "SW10",
+      "topic": "Korrelation & Kausalität",
+      "category": "Konzept",
+      "difficulty": "easy",
+      "front": "Faustregel für die Interpretation von $|r|$?",
+      "back": "<table><tr><th>$|r|$</th><th>Zusammenhang</th></tr><tr><td>&lt; 0.2</td><td>sehr schwach / keiner</td></tr><tr><td>0.2 – 0.4</td><td>schwach</td></tr><tr><td>0.4 – 0.6</td><td>moderat</td></tr><tr><td>0.6 – 0.8</td><td>stark</td></tr><tr><td>&gt; 0.8</td><td>sehr stark</td></tr></table><br>Vorzeichen unverändert: $r = -0.85$ ist <b>genauso stark</b> wie $r = +0.85$."
+    },
+    {
+      "id": "sw11-01",
+      "week": "SW11",
+      "topic": "Regression",
+      "category": "Konzept",
+      "difficulty": "easy",
+      "front": "Was ist das Ziel einer <b>Regressionsanalyse</b>?",
+      "back": "Ein <b>Modell</b> zu finden, das die Beziehung zwischen Prädiktoren $X_1, \\ldots, X_m$ und Zielgrösse $Y$ beschreibt:<br><br>$$Y = \\texttt{predict}(X_1, \\ldots, X_m)$$<br><br><b>Drei Aufgaben:</b><br>1. Modellparameter <b>schätzen</b> (z.B. mit OLS).<br>2. Modellgüte <b>bewerten</b> (RSE, $R^2$).<br>3. <b>Vorhersagen</b> mit Unsicherheit (Konfidenz- und Vorhersageintervalle)."
+    },
+    {
+      "id": "sw11-02",
+      "week": "SW11",
+      "topic": "Regression",
+      "category": "Begriff",
+      "difficulty": "easy",
+      "front": "Was ist ein <b>Residuum</b> $r_i$?",
+      "back": "$$r_i = y_i - \\hat{y}_i$$<br><br>= Beobachtung minus Vorhersage – die <b>vertikale</b> Abweichung des Datenpunkts von der Regressionsgeraden.<br><br>Vorzeichen:<br>– Punkt <b>über</b> der Geraden → $r_i > 0$.<br>– Punkt <b>unter</b> der Geraden → $r_i < 0$.<br><br>OLS minimiert die Summe der Residuen<b>quadrate</b>, nicht die Summe der Residuen selbst (die wäre 0 nach der Schätzung)."
+    },
+    {
+      "id": "sw11-03",
+      "week": "SW11",
+      "topic": "Regression",
+      "category": "Formel",
+      "difficulty": "medium",
+      "front": "Was ist die <b>Methode der kleinsten Quadrate</b> (OLS)?",
+      "back": "Wir wählen die Parameter $\\hat{a}, \\hat{b}$, die folgende Summe minimieren:<br><br>$$\\mathsf{RSS}(a, b) = \\sum_{i=1}^{n} (y_i - (a x_i + b))^2$$<br><br><b>Warum Quadrate?</b><br>– differenzierbar (numerisch leicht zu lösen)<br>– bestraft grosse Abweichungen stärker<br>– elegante geometrische Deutung (Projektion)<br><br>In Python: <code>scipy.optimize.minimize(RSS, x0=...)</code>"
+    },
+    {
+      "id": "sw11-04",
+      "week": "SW11",
+      "topic": "Regression",
+      "category": "Formel",
+      "difficulty": "hard",
+      "front": "Formel für den <b>Standardfehler der Residuen</b> $\\mathsf{RSE}$ – warum geteilt durch $n - 2$?",
+      "back": "$$\\mathsf{RSE} = \\sqrt{\\frac{\\mathsf{RSS}}{n - 2}}$$<br><br><b>Warum $n - 2$:</b> Wir schätzen <b>zwei</b> Parameter aus den Daten ($\\hat{a}$ und $\\hat{b}$). Jede Schätzung verbraucht einen Freiheitsgrad. Ohne diese Korrektur wäre RSE zu optimistisch.<br><br><b>Allgemein:</b> Bei multipler Regression mit $p$ Parametern: $\\sqrt{\\mathsf{RSS}/(n - p)}$.<br><br>RSE hat dieselbe Einheit wie $Y$ – interpretierbar als 'typische Abweichung'."
+    },
+    {
+      "id": "sw11-05",
+      "week": "SW11",
+      "topic": "Regression",
+      "category": "Formel",
+      "difficulty": "medium",
+      "front": "Was ist das <b>Bestimmtheitsmass</b> $R^2$?",
+      "back": "$$R^2 = \\frac{\\mathsf{MQD}(\\hat{y})}{\\mathsf{MQD}(y)} = \\frac{\\text{vom Modell erklärte Streuung}}{\\text{Gesamtstreuung von }Y}$$<br><br>Wertebereich: $[0, 1]$.<br>– $R^2 = 1$: alle Punkte auf der Geraden.<br>– $R^2 = 0$: Modell so gut wie der reine Mittelwert.<br><br><b>In Python:</b> <code>predict(X).var() / Y.var()</code>"
+    },
+    {
+      "id": "sw11-06",
+      "week": "SW11",
+      "topic": "Regression",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Welche Beziehung gilt zwischen $R^2$ und Pearson-$r$?",
+      "back": "In der <b>linearen Einfachregression</b>:<br><br>$$R^2 = r^2$$<br><br>Beide Werte enthalten dieselbe Information – $R^2$ verliert das Vorzeichen.<br><br>Zusätzlich: Steigung $\\hat{a} = r \\cdot \\sigma_y / \\sigma_x$.<br><br><b>Bei multipler Regression</b> gilt diese einfache Beziehung nicht mehr."
+    },
+    {
+      "id": "sw11-07",
+      "week": "SW11",
+      "topic": "Regression",
+      "category": "Konzept",
+      "difficulty": "hard",
+      "front": "Unterschied <b>Konfidenzintervall</b> (Mittelwert) vs. <b>Vorhersageintervall</b> (Einzelwert)?",
+      "back": "<b>Konfidenzintervall:</b> Bereich, in dem der wahre <b>Mittelwert</b> $\\mathbb{E}[Y \\mid X = x]$ mit z.B. 95 % Sicherheit liegt. Schmal.<br><br><b>Vorhersageintervall:</b> Bereich, in dem ein <b>einzelner neuer Beobachtungswert</b> $y_{\\text{neu}}$ mit 95 % Sicherheit liegt. <b>Breiter</b>, weil zusätzlich die zufällige Streuung neuer Daten dazukommt.<br><br><b>Bootstrap-Trick:</b> für PI zu jeder Modell-Vorhersage zusätzlich ein zufälliges Residuum addieren."
+    },
+    {
+      "id": "sw11-08",
+      "week": "SW11",
+      "topic": "Regression",
+      "category": "Code",
+      "difficulty": "medium",
+      "front": "Was bedeuten <code>fit.x</code> und <code>fit.fun</code> bei <code>scipy.optimize.minimize</code>?",
+      "back": "<code>fit.x</code> – das <b>Argument-Array</b>, an dem das Minimum gefunden wurde, also die optimalen Parameter $[\\hat{a}, \\hat{b}]$.<br><br><code>fit.fun</code> – der <b>Funktionswert</b> am Minimum, also $\\mathsf{RSS}(\\hat{a}, \\hat{b})$.<br><br>Weitere nützliche Felder: <code>fit.success</code> (Konvergenz?), <code>fit.message</code> (Statusmeldung), <code>fit.nit</code> (Anzahl Iterationen)."
+    },
+    {
+      "id": "sw11-09",
+      "week": "SW11",
+      "topic": "Regression",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Wie testet man, ob ein <b>Prädiktor signifikant</b> ist (Permutationstest)?",
+      "back": "<b>$H_0$:</b> $a = 0$ (Prädiktor hat keinen Einfluss).<br><br><b>Vorgehen:</b><br>1. Originalmodell schätzen → $\\hat{a}_{obs}$.<br>2. $Y$-Werte zufällig <b>permutieren</b> (ohne Zurücklegen) – zerstört jeden Zusammenhang.<br>3. Auf permutierten Daten neu schätzen → $\\hat{a}^{(k)}$.<br>4. Schritte 2–3 viele Male wiederholen.<br>5. p-Wert = Anteil der $|\\hat{a}^{(k)}| \\geqslant |\\hat{a}_{obs}|$.<br><br>$p < 0.05$ → $H_0$ verwerfen, Prädiktor signifikant."
+    },
+    {
+      "id": "sw11-10",
+      "week": "SW11",
+      "topic": "Regression",
+      "category": "Konzept",
+      "difficulty": "hard",
+      "front": "Wie berechnet man ein 95%-<b>Vorhersageintervall</b> mit Bootstrap?",
+      "back": "Für einen neuen Wert $x_{\\text{neu}}$:<br><br>1. Resample der Daten ziehen (mit Zurücklegen).<br>2. Modell schätzen → $\\hat{a}^{(k)}, \\hat{b}^{(k)}$.<br>3. Punktvorhersage: $\\hat{y}^{(k)} = \\hat{a}^{(k)} \\cdot x_{\\text{neu}} + \\hat{b}^{(k)}$.<br>4. <b>Zusätzlich</b>: ein zufälliges Residuum $\\varepsilon$ aus dem Resample dazuaddieren.<br>5. Schritte 1–4 viele Male wiederholen.<br>6. Quantile $[Q_{2.5\\%}, Q_{97.5\\%}]$ über alle $\\hat{y}^{(k)} + \\varepsilon^{(k)}$.<br><br>Schritt 4 macht das Intervall <b>breiter</b> als das Konfidenzintervall."
+    },
+    {
+      "id": "sw11-11",
+      "week": "SW11",
+      "topic": "Regression",
+      "category": "Falle",
+      "difficulty": "medium",
+      "front": "Was bedeutet $R^2 = 0.95$? Was <b>bedeutet es nicht</b>?",
+      "back": "<b>Ja:</b> 95 % der Streuung von $Y$ wird durch das Modell erklärt – sehr gute In-Sample-Anpassung.<br><br><b>Nein:</b><br>– Beweist <b>keine Kausalität</b>.<br>– Garantiert <b>keine gute Generalisierung</b> auf neue Daten (Overfitting möglich).<br>– Sagt nichts über die <b>Modellstruktur</b> (lineare Anpassung kann gut sein, aber falsche Form für die Realität).<br>– Sagt nichts über <b>Signifikanz</b> einzelner Prädiktoren – dafür p-Wert / Konfidenzintervall."
+    },
+    {
+      "id": "sw11-12",
+      "week": "SW11",
+      "topic": "Regression",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Wann passt ein <b>nicht-lineares Modell</b> besser? Wie erkennt man das?",
+      "back": "Wenn die Punktwolke <b>gekrümmt</b> ist – z.B. exponentielles Wachstum, Sättigungseffekte, Schwellwerte.<br><br><b>Diagnose:</b><br>– Lineare Anpassung lässt systematische Muster in den Residuen (z.B. erst zu hoch, dann zu tief, dann zu hoch).<br>– Niedriges $R^2$ trotz visuell klarer Struktur.<br><br><b>Vorgehen:</b> Modellfunktion ändern (z.B. $a e^{bx} + c$), Rest der OLS-Pipeline bleibt gleich. <code>minimize()</code> funktioniert weiter."
+    },
+    {
+      "id": "code-01",
+      "week": "SW02",
+      "topic": "Datenbeschreibung",
+      "category": "Code",
+      "difficulty": "medium",
+      "front": "Was gibt der folgende Code aus?<br><pre><code>import pandas as pd\ndf = pd.DataFrame({\"x\": [1, 2, 3, 4, 100]})\nprint(df[\"x\"].mean())\nprint(df[\"x\"].median())</code></pre>",
+      "back": "Mittelwert: $(1+2+3+4+100)/5 = 22.0$<br><br>Median: 3 (mittlerer Wert nach Sortierung).<br><br><b>Lehre:</b> Der einzelne Ausreisser 100 zieht den Mittelwert dramatisch nach oben, der Median bleibt stabil bei 3 – Demonstration der Robustheit."
+    },
+    {
+      "id": "code-02",
+      "week": "SW04",
+      "topic": "Modelle für zufällige Ereignisse",
+      "category": "Code",
+      "difficulty": "hard",
+      "front": "Was berechnet der folgende Code?<br><pre><code>from scipy.stats import binom\np = 1 - binom.cdf(2, n=10, p=0.3)</code></pre>",
+      "back": "$1 - P(X \\leqslant 2) = P(X \\geqslant 3)$<br><br>= Wahrscheinlichkeit, bei 10 Versuchen mit Erfolgswahrscheinlichkeit 0.3 <b>mindestens 3</b> Erfolge zu erzielen.<br><br>Numerisch: $\\approx 0.617$.<br><br><b>Falle:</b> $1 - P(X \\leqslant 2) \\neq P(X > 2)$… doch! Bei diskreten Verteilungen ist $X > 2 \\Leftrightarrow X \\geqslant 3$, also gleich. Aber $1 - P(X < 2) \\neq P(X \\geqslant 2)$!"
+    },
+    {
+      "id": "code-03",
+      "week": "SW07",
+      "topic": "Hypothesentests mit Resampling",
+      "category": "Code",
+      "difficulty": "hard",
+      "front": "Was tut der folgende Code?<br><pre><code>diff_obs = a.mean() - b.mean()\npool = np.concatenate([a, b])\ndiffs = []\nfor _ in range(10000):\n    p = np.random.permutation(pool)\n    diffs.append(p[:len(a)].mean() - p[len(a):].mean())\np_value = np.mean(np.abs(diffs) >= np.abs(diff_obs))</code></pre>",
+      "back": "Ein <b>zweiseitiger Permutationstest</b> auf die Mittelwertsdifferenz zwischen den Gruppen <code>a</code> und <code>b</code>.<br><br><b>Ablauf:</b><br>1. Beobachtete Differenz $\\Delta_{obs}$ berechnen.<br>2. Beide Gruppen kombinieren.<br>3. 10 000-mal: Werte umpermutieren, neue Differenz berechnen.<br>4. p-Wert = Anteil der Permutationen mit $|\\Delta^{(k)}| \\geqslant |\\Delta_{obs}|$.<br><br><b>$H_0$:</b> Gruppen kommen aus derselben Verteilung.<br><br><b>Hinweis:</b> <code>np.abs(...) >= np.abs(...)</code> macht den Test zweiseitig."
+    },
+    {
+      "id": "code-04",
+      "week": "SW06",
+      "topic": "Schätzverfahren & Bootstrap",
+      "category": "Code",
+      "difficulty": "medium",
+      "front": "Was tut dieser Code?<br><pre><code>n_boot = 1000\nmeans = []\nfor _ in range(n_boot):\n    sample = df[\"x\"].sample(len(df), replace=True)\n    means.append(sample.mean())\nci = np.quantile(means, [0.025, 0.975])</code></pre>",
+      "back": "Berechnet ein <b>95%-Bootstrap-Konfidenzintervall</b> für den Mittelwert von <code>df[\"x\"]</code>.<br><br><b>Ablauf:</b><br>1. 1000 Resamples ziehen (gleiche Grösse, mit Zurücklegen).<br>2. Pro Resample den Mittelwert berechnen → 1000 Bootstrap-Mittelwerte.<br>3. 2.5%- und 97.5%-Quantile als Intervallgrenzen.<br><br><b>Vorteil:</b> verteilungsfrei – keine Normalverteilungsannahme nötig."
+    },
+    {
+      "id": "code-05",
+      "week": "SW10",
+      "topic": "Korrelation & Kausalität",
+      "category": "Code",
+      "difficulty": "easy",
+      "front": "Welcher Befehl liefert die <b>Spearman</b>-Rangkorrelation einer DataFrame-Spaltenpaarung?",
+      "back": "<code>df[[\"a\", \"b\"]].corr(method=\"spearman\")</code><br><br>Liefert eine 2×2-Korrelationsmatrix; Spearman-$r_{Sp}$ steht in <code>iloc[0, 1]</code>.<br><br><b>Default ohne Argument</b> (<code>df.corr()</code>) ist Pearson. Andere Optionen: <code>method=\"kendall\"</code> (Kendall-Tau)."
+    },
+    {
+      "id": "code-06",
+      "week": "SW11",
+      "topic": "Regression",
+      "category": "Code",
+      "difficulty": "hard",
+      "front": "Was passiert hier? Wofür stehen die drei <code>print()</code>-Ausgaben?<pre><code>fit = minimize(RSS, x0=[0.1, 0.1])\nprint(fit.fun)\nprint(np.sqrt(fit.fun / (len(X) - 2)))\nprint(predict(X).var() / Y.var())</code></pre>",
+      "back": "1. <code>fit.fun</code> = <b>RSS</b> am Optimum.<br>2. <code>np.sqrt(fit.fun / (len(X) - 2))</code> = <b>RSE</b> (Residualstandardfehler), Wurzel aus RSS/(n-2).<br>3. <code>predict(X).var() / Y.var()</code> = <b>$R^2$</b>, das Bestimmtheitsmass.<br><br>Drei Hauptkennzahlen einer linearen Regression auf einen Schlag."
+    },
+    {
+      "id": "konzept-01",
+      "week": "SW10",
+      "topic": "Korrelation & Kausalität",
+      "category": "Konzept",
+      "difficulty": "hard",
+      "front": "Geben Sie ein konkretes Beispiel, wo Korrelation $\\neq$ Kausalität (mit Confounder).",
+      "back": "<b>Beispiel:</b> In einer Stadt korrelieren <i>Anzahl Kirchen</i> und <i>Anzahl Verbrechen</i> stark positiv.<br><br><b>Confounder:</b> Stadtgrösse / Bevölkerungszahl. Mehr Einwohner → mehr Kirchen UND mehr Verbrechen (in absoluten Zahlen).<br><br><b>Adjustiert pro Kopf</b>: Korrelation verschwindet.<br><br>Andere klassische Beispiele: Eisverkauf × Sonnenbrand (← Sommer), Storchenpopulation × Geburtenrate (← ländliche Region), Schuhgrösse × Lesevermögen bei Kindern (← Alter)."
+    },
+    {
+      "id": "konzept-02",
+      "week": "SW11",
+      "topic": "Regression",
+      "category": "Konzept",
+      "difficulty": "hard",
+      "front": "Warum ist das <b>Vorhersageintervall</b> immer breiter als das Konfidenzintervall?",
+      "back": "Beide Intervalle berücksichtigen die <b>Schätzunsicherheit</b> der Regressionsparameter (Lage der Geraden).<br><br>Das <b>Vorhersageintervall</b> berücksichtigt <b>zusätzlich</b> die <b>zufällige Streuung</b> einer einzelnen neuen Beobachtung um die Gerade (Residuen).<br><br>$$\\sigma_{\\text{PI}}^2 = \\sigma_{\\text{CI}}^2 + \\sigma^2_{\\text{Residuum}}$$<br><br>Da Varianzen sich addieren, ist die PI-Standardabweichung grösser → breiter."
+    },
+    {
+      "id": "begriff-01",
+      "week": "SW06",
+      "topic": "Schätzverfahren & Bootstrap",
+      "category": "Begriff",
+      "difficulty": "medium",
+      "front": "Was ist <b>Konsistenz</b> eines Schätzers?",
+      "back": "Ein Schätzer $\\hat\\theta_n$ heisst <b>konsistent</b>, wenn er mit wachsendem $n$ in Wahrscheinlichkeit gegen den wahren Parameter $\\theta$ konvergiert:<br><br>$$\\hat\\theta_n \\xrightarrow{P} \\theta \\quad \\text{für } n \\to \\infty$$<br><br><b>Praktisch:</b> Mehr Daten → präzisere Schätzung.<br><br>Konsistenz und Erwartungstreue sind <b>verschiedene</b> Eigenschaften – ein Schätzer kann konsistent, aber nicht erwartungstreu sein (Beispiel: ML-Varianzschätzer mit $1/n$)."
+    },
+    {
+      "id": "vergleich-01",
+      "week": "SW09",
+      "topic": "Methodenwahl",
+      "category": "Konzept",
+      "difficulty": "hard",
+      "front": "Welche Korrelations-/Zusammenhangsmasse gibt es nach <b>Skalenniveau</b>?",
+      "back": "<b>Nominal × Nominal:</b> $C_{\\text{korr}}$ (korrigierter Kontingenzkoeffizient).<br><br><b>Ordinal × Ordinal</b> oder mind. ein Ordinal: <b>Spearman</b> $r_{Sp}$.<br><br><b>Metrisch × Metrisch (linear):</b> <b>Pearson</b> $r$.<br><br><b>Metrisch × Metrisch (monoton, robust):</b> Spearman $r_{Sp}$.<br><br><b>Wertebereiche:</b><br>– $C_{\\text{korr}} \\in [0, 1]$<br>– $r, r_{Sp} \\in [-1, +1]$"
+    },
+    {
+      "id": "vergleich-02",
+      "week": "SW07",
+      "topic": "Methodenwahl",
+      "category": "Konzept",
+      "difficulty": "hard",
+      "front": "Welcher Test wann? (Mittelwertsvergleich)",
+      "back": "<b>2 Gruppen, normale Daten, $\\sigma$ bekannt:</b> $z$-Test.<br><br><b>2 Gruppen, normale Daten, $\\sigma$ unbekannt:</b> $t$-Test.<br><br><b>2 Gruppen, beliebige Verteilung, klein/schief:</b> Permutationstest.<br><br><b>$\\geqslant 3$ Gruppen, normal:</b> ANOVA.<br><br><b>$\\geqslant 3$ Gruppen, beliebig:</b> Permutationstest mit ANOVA-F-Statistik.<br><br><b>Faustregel:</b> Im Zweifel <b>Permutationstest</b> – verteilungsfrei und in modernen Statistik-Pipelines unkompliziert."
+    },
+    {
+      "id": "falle-01",
+      "week": "SW06",
+      "topic": "Schätzverfahren & Bootstrap",
+      "category": "Falle",
+      "difficulty": "medium",
+      "front": "Wann ist <code>df.std()</code> in pandas $\\neq$ <code>np.std()</code> in NumPy?",
+      "back": "<b>Immer!</b> Sie haben <b>verschiedene Defaults</b>:<br><br>– <code>pandas.std()</code>: Default <code>ddof=1</code> (Stichproben-Std).<br>– <code>numpy.std()</code>: Default <code>ddof=0</code> (Population-Std).<br><br><b>Konsequenz:</b> Bei kleinen $n$ können sich die Werte sichtbar unterscheiden.<br><br><b>Lehre:</b> Defaults nie blind übernehmen – immer prüfen, welche Konvention die Bibliothek verwendet."
+    },
+    {
+      "id": "falle-02",
+      "week": "SW04",
+      "topic": "Modelle für zufällige Ereignisse",
+      "category": "Falle",
+      "difficulty": "hard",
+      "front": "Stetige Verteilung: <code>norm.cdf(2) - norm.cdf(2)</code> = ?",
+      "back": "$= 0$<br><br>Trivial, aber pädagogisch wichtig: zeigt, dass $P(X = c) = 0$ bei stetigen Verteilungen.<br><br>Konsequenz: Es ist <b>egal</b>, ob man $P(a \\leqslant X \\leqslant b)$ oder $P(a < X < b)$ schreibt – beide gleich.<br><br>Bei <b>diskreten</b> Verteilungen wäre das anders!"
+    },
+    {
+      "id": "falle-03",
+      "week": "SW07",
+      "topic": "Hypothesentests mit Resampling",
+      "category": "Falle",
+      "difficulty": "hard",
+      "front": "Was bedeutet ein 'signifikanter' p-Wert für die <b>Effektgrösse</b>?",
+      "back": "<b>Wenig.</b> Ein kleiner p-Wert sagt nur, dass der Effekt statistisch <b>nicht zufällig</b> ist – nicht, dass er <b>gross</b> oder <b>praktisch relevant</b> ist.<br><br>Bei sehr grossem $n$ werden auch winzige Effekte signifikant ($p < 0.001$ trotz $\\Delta = 0.1\\%$).<br><br><b>Daher:</b> Signifikanz <b>+</b> Effektgrösse <b>+</b> Konfidenzintervall <b>+</b> fachliche Relevanz – nie nur ein p-Wert isoliert."
+    },
+    {
+      "id": "konzept-03",
+      "week": "SW05",
+      "topic": "Stichproben",
+      "category": "Konzept",
+      "difficulty": "medium",
+      "front": "Warum hilft es <b>nicht</b>, eine grosse, aber verzerrte Stichprobe zu nehmen?",
+      "back": "Auswahlverzerrung (Selection Bias) führt zu einem <b>systematischen Fehler</b>, der mit grösserem $n$ <b>nicht</b> verschwindet – im Gegenteil, er wird mit höherer Genauigkeit auf den falschen Wert konzentriert.<br><br><b>Beispiel:</b> 1 Mio. Twitter-Nutzer befragen, um die Stimmung der Schweizer Bevölkerung zu messen → wir messen die Stimmung der Twitter-Nutzer, nicht der Bevölkerung.<br><br><b>Lehre:</b> Repräsentativität schlägt Grösse."
+    },
+    {
+      "id": "konzept-04",
+      "week": "SW08",
+      "topic": "ANOVA & Chi-Quadrat",
+      "category": "Konzept",
+      "difficulty": "hard",
+      "front": "Wie erkennt man <b>gefälschte Daten</b> mit dem Chi-Quadrat-Test?",
+      "back": "Echte Daten haben natürliche Streuung – wenn jemand Würfelresultate fälscht und 'gleichmässige' Verteilung anstrebt, sind die Häufigkeiten <b>zu nah</b> an der erwarteten Verteilung.<br><br>$\\chi^2$ wird <b>ungewöhnlich klein</b> (extremer p-Wert in die andere Richtung – nahe 1.0).<br><br><b>Klassisches Beispiel:</b> Mendels Erbsenexperimente – Fishers Re-Analyse fand $\\chi^2$ so klein, dass er Datenanpassung vermutete.<br><br><b>Lehre:</b> Auch <b>zu gut</b> ist verdächtig."
+    }
+  ]
+}

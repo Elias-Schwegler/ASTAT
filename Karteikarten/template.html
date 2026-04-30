@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ASTAT Karteikarten</title>
+
+<style>
+  :root {
+    --hslu: rgb(160, 0, 86);
+    --hslu-light: rgb(200, 100, 150);
+    --hslu-bg: rgba(160, 0, 86, 0.08);
+    --hslu-border: rgba(160, 0, 86, 0.2);
+    --bg: #fafafa;
+    --bg-elevated: #ffffff;
+    --bg-sidebar: #f3f3f3;
+    --text: #1a1a1a;
+    --text-muted: #666;
+    --text-light: #999;
+    --border: #e0e0e0;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+    --success: #2d7a3a;
+    --success-bg: rgba(45, 122, 58, 0.1);
+    --warning: #c0392b;
+    --warning-bg: rgba(192, 57, 43, 0.1);
+    --info: #2c6fbb;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #18181b;
+    --bg-elevated: #242427;
+    --bg-sidebar: #1f1f22;
+    --text: #e8e8e8;
+    --text-muted: #a0a0a0;
+    --text-light: #707070;
+    --border: #333336;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.5);
+    --hslu-bg: rgba(220, 100, 160, 0.12);
+    --hslu-border: rgba(220, 100, 160, 0.3);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* Wichtig: hidden-Attribut hat in HTML5 Vorrang vor display:flex etc. nicht automatisch.
+     Diese Regel stellt sicher, dass [hidden] alles ausblendet. */
+  [hidden] { display: none !important; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 16px;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    grid-template-rows: 56px 1fr;
+    grid-template-areas:
+      "topbar topbar"
+      "sidebar main";
+    height: 100vh;
+  }
+
+  /* ============== TOPBAR ============== */
+  .topbar {
+    grid-area: topbar;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 10;
+  }
+
+  .topbar h1 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--hslu);
+    letter-spacing: -0.01em;
+  }
+
+  .topbar h1::before {
+    content: "♠";
+    margin-right: 8px;
+    color: var(--hslu);
+  }
+
+  .topbar-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  .icon-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--text-muted);
+    transition: all 0.15s;
+  }
+  .icon-btn:hover {
+    background: var(--hslu-bg);
+    color: var(--hslu);
+  }
+
+  /* ============== SIDEBAR ============== */
+  .sidebar {
+    grid-area: sidebar;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 20px 16px;
+  }
+
+  .sidebar h2 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin: 16px 4px 10px;
+  }
+
+  .sidebar h2:first-child {
+    margin-top: 0;
+  }
+
+  .filter-group {
+    margin-bottom: 16px;
+  }
+
+  .filter-group summary {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    padding: 6px 4px;
+    user-select: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .filter-group summary::-webkit-details-marker { display: none; }
+  .filter-group summary::after {
+    content: "▾";
+    color: var(--text-light);
+    transition: transform 0.15s;
+    font-size: 10px;
+  }
+  .filter-group:not([open]) summary::after { transform: rotate(-90deg); }
+
+  .chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 8px 4px 4px;
+  }
+
+  .chip {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 4px 11px;
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.12s;
+    user-select: none;
+  }
+  .chip:hover { border-color: var(--hslu-light); }
+  .chip.active {
+    background: var(--hslu);
+    border-color: var(--hslu);
+    color: white;
+  }
+
+  .sidebar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 16px 0;
+  }
+
+  .sidebar-actions button {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.12s;
+    font-weight: 500;
+  }
+  .sidebar-actions button:hover {
+    border-color: var(--hslu);
+    color: var(--hslu);
+  }
+
+  .stats {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    color: var(--text-muted);
+  }
+  .stat-row strong {
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-row.success strong { color: var(--success); }
+  .stat-row.warning strong { color: var(--warning); }
+
+  .stat-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 6px 0;
+  }
+
+  .stat-week-list {
+    margin-top: 8px;
+    font-size: 11px;
+  }
+  .stat-week-row {
+    display: grid;
+    grid-template-columns: 36px 1fr 28px;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 0;
+    color: var(--text-muted);
+  }
+  .stat-week-row .label { font-weight: 600; }
+  .stat-week-row .bar-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .stat-week-row .bar-fill {
+    height: 100%;
+    background: var(--success);
+    transition: width 0.4s;
+  }
+  .stat-week-row .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* ============== MAIN AREA ============== */
+  .main {
+    grid-area: main;
+    overflow-y: auto;
+    padding: 24px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .progress-track {
+    width: 100%;
+    max-width: 800px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--hslu), var(--hslu-light));
+    transition: width 0.3s ease;
+    border-radius: 2px;
+  }
+
+  /* ============== CARD ============== */
+  .card-container {
+    width: 100%;
+    max-width: 800px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1500px;
+    min-height: 360px;
+    margin-bottom: 18px;
+  }
+
+  .card {
+    width: 100%;
+    min-height: 360px;
+    background: var(--bg-elevated);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding: 28px 32px 24px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .card.flipped {
+    /* No physical flip — we toggle content visibility instead, simpler for long content */
+  }
+
+  .card-meta {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .badge.week {
+    background: var(--hslu);
+    color: white;
+  }
+  .badge.category {
+    background: var(--hslu-bg);
+    color: var(--hslu);
+    border: 1px solid var(--hslu-border);
+  }
+  .badge.difficulty {
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .badge.difficulty.easy { color: var(--success); border-color: var(--success); }
+  .badge.difficulty.medium { color: var(--info); border-color: var(--info); }
+  .badge.difficulty.hard { color: var(--warning); border-color: var(--warning); }
+
+  .badge.status {
+    margin-left: auto;
+  }
+  .badge.status.known { background: var(--success-bg); color: var(--success); }
+  .badge.status.unknown { background: var(--warning-bg); color: var(--warning); }
+  .badge.status.unseen { background: var(--border); color: var(--text-muted); }
+
+  .card-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-light);
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .card-text {
+    font-size: 17px;
+    color: var(--text);
+    flex: 1;
+    line-height: 1.55;
+  }
+
+  .card-text p { margin-bottom: 8px; }
+  .card-text p:last-child { margin-bottom: 0; }
+
+  .card-text code {
+    background: var(--bg-sidebar);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.9em;
+    color: var(--hslu);
+  }
+
+  .card-text pre {
+    background: var(--bg-sidebar);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin: 10px 0;
+    overflow-x: auto;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .card-text pre code {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: var(--text);
+  }
+
+  .card-text br + br { display: none; }
+
+  .card-text table {
+    border-collapse: collapse;
+    margin: 8px 0;
+    font-size: 13px;
+  }
+  .card-text table td, .card-text table th {
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    text-align: left;
+  }
+  .card-text table th {
+    background: var(--bg-sidebar);
+    font-weight: 600;
+  }
+
+  .card-side.back {
+    border-top: 1px solid var(--border);
+    margin-top: 18px;
+    padding-top: 18px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+    justify-content: center;
+  }
+
+  .btn {
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 11px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: var(--hslu);
+    color: white;
+  }
+  .btn-primary:hover { background: rgb(130, 0, 70); }
+
+  .btn-success {
+    background: var(--success);
+    color: white;
+  }
+  .btn-success:hover { background: #1f5a28; }
+
+  .btn-warning {
+    background: var(--warning);
+    color: white;
+  }
+  .btn-warning:hover { background: #962e23; }
+
+  .btn-ghost {
+    background: var(--bg-elevated);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover {
+    border-color: var(--hslu);
+    color: var(--hslu);
+  }
+
+  /* ============== NAVIGATION ============== */
+  .card-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .nav-btn {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 17px;
+    transition: all 0.15s;
+  }
+  .nav-btn:hover:not(:disabled) {
+    background: var(--hslu);
+    border-color: var(--hslu);
+    color: white;
+  }
+  .nav-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .position {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  /* ============== EMPTY STATE ============== */
+  .empty {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 16px;
+    padding: 60px 20px;
+    margin-top: 80px;
+  }
+  .empty .emoji {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  /* ============== KEYBOARD HINT ============== */
+  .kbd-hint {
+    margin-top: 16px;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 12px;
+  }
+  .kbd-hint kbd {
+    background: var(--bg-sidebar);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin: 0 2px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* ============== RESPONSIVE ============== */
+  @media (max-width: 768px) {
+    .app {
+      grid-template-columns: 1fr;
+      grid-template-rows: 56px 1fr;
+      grid-template-areas:
+        "topbar"
+        "main";
+    }
+    .sidebar {
+      position: fixed;
+      top: 56px; left: 0; bottom: 0;
+      width: 280px;
+      transform: translateX(-100%);
+      transition: transform 0.25s ease;
+      z-index: 20;
+    }
+    .sidebar.open { transform: translateX(0); }
+    .main { padding: 16px 12px 80px; }
+    .card { padding: 22px 20px 18px; min-height: 320px; }
+    .card-text { font-size: 15px; }
+    .topbar h1 { font-size: 15px; }
+    .topbar-meta { font-size: 12px; gap: 8px; }
+  }
+
+  @media (min-width: 769px) {
+    .menu-toggle { display: none; }
+  }
+
+  .menu-toggle {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    color: var(--text);
+    margin-right: 8px;
+  }
+
+  /* MathJax sizing fix */
+  .card-text mjx-container { font-size: 1em !important; }
+</style>
+
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    svg: { fontCache: 'global' },
+    startup: {
+      typeset: false
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+
+<body>
+
+<div class="app">
+  <header class="topbar">
+    <div style="display: flex; align-items: center;">
+      <button class="menu-toggle" id="menuToggle" title="Menü">☰</button>
+      <h1>ASTAT Karteikarten</h1>
+    </div>
+    <div class="topbar-meta">
+      <span id="counter">0 / 0</span>
+      <button class="icon-btn" id="themeBtn" title="Hell/Dunkel umschalten">🌙</button>
+    </div>
+  </header>
+
+  <aside class="sidebar" id="sidebar">
+    <h2>Wochen</h2>
+    <details class="filter-group" open>
+      <summary>Auswahl <span id="weekCount" style="color:var(--text-light);font-weight:500"></span></summary>
+      <div id="weekFilter" class="chip-group"></div>
+    </details>
+
+    <h2>Kategorien</h2>
+    <details class="filter-group" open>
+      <summary>Auswahl <span id="categoryCount" style="color:var(--text-light);font-weight:500"></span></summary>
+      <div id="categoryFilter" class="chip-group"></div>
+    </details>
+
+    <h2>Schwierigkeit</h2>
+    <details class="filter-group" open>
+      <summary>Auswahl</summary>
+      <div id="difficultyFilter" class="chip-group">
+        <span class="chip" data-value="easy">leicht</span>
+        <span class="chip" data-value="medium">mittel</span>
+        <span class="chip" data-value="hard">schwer</span>
+      </div>
+    </details>
+
+    <h2>Status</h2>
+    <details class="filter-group" open>
+      <summary>Auswahl</summary>
+      <div id="statusFilter" class="chip-group">
+        <span class="chip" data-value="unseen">noch nicht</span>
+        <span class="chip" data-value="unknown">muss üben</span>
+        <span class="chip" data-value="known">kann ich</span>
+      </div>
+    </details>
+
+    <div class="sidebar-actions">
+      <button id="shuffleBtn">🔀 Karten mischen</button>
+      <button id="reviewBtn">📚 Nur "muss üben"</button>
+      <button id="resetBtn">↻ Fortschritt zurücksetzen</button>
+    </div>
+
+    <h2>Statistik</h2>
+    <div class="stats" id="stats"></div>
+  </aside>
+
+  <main class="main">
+    <div class="progress-track"><div class="progress-bar" id="progressBar" style="width: 0%"></div></div>
+
+    <div class="card-container" id="cardContainer">
+      <div class="card" id="card">
+        <div class="card-meta" id="cardMeta"></div>
+
+        <div class="card-side front" id="cardFront">
+          <div class="card-label">Frage</div>
+          <div class="card-text" id="frontText"></div>
+        </div>
+
+        <div class="card-side back" id="cardBack" hidden>
+          <div class="card-label">Antwort</div>
+          <div class="card-text" id="backText"></div>
+        </div>
+
+        <div class="card-actions" id="actionsFlip">
+          <button class="btn btn-primary" id="flipBtn">Antwort zeigen</button>
+        </div>
+
+        <div class="card-actions" id="actionsGrade" hidden>
+          <button class="btn btn-warning" id="unknownBtn">✗ Muss üben</button>
+          <button class="btn btn-success" id="knownBtn">✓ Kann ich</button>
+        </div>
+      </div>
+    </div>
+
+    <nav class="card-nav">
+      <button class="nav-btn" id="prevBtn" title="Vorherige (←)">←</button>
+      <span class="position" id="position">– / –</span>
+      <button class="nav-btn" id="nextBtn" title="Nächste (→)">→</button>
+    </nav>
+
+    <div class="kbd-hint">
+      <kbd>Space</kbd> Antwort zeigen ·
+      <kbd>J</kbd> kann ich ·
+      <kbd>F</kbd> muss üben ·
+      <kbd>←</kbd>/<kbd>→</kbd> blättern ·
+      <kbd>S</kbd> mischen
+    </div>
+
+    <div class="empty" id="emptyState" hidden>
+      <span class="emoji">🔍</span>
+      Keine Karten passen zum Filter.<br />
+      <small>Wählen Sie mehr Wochen, Kategorien oder Status aus.</small>
+    </div>
+  </main>
+</div>
+
+<!-- Daten -->
+<script type="application/json" id="cardsData">
+__CARDS_JSON__
+</script>
+
+<script>
+'use strict';
+
+const STORAGE_KEY = 'astat-flashcards-v1';
+const THEME_KEY = 'astat-flashcards-theme';
+
+// ===================== Daten laden =====================
+const dataRaw = document.getElementById('cardsData').textContent;
+const dataset = JSON.parse(dataRaw);
+const ALL_CARDS = dataset.cards;
+
+// ===================== Mini-Markdown =====================
+// Konvertiert die wenigen Markdown-Reste (**bold**, Tabellen) zu HTML.
+// Ignoriert Inhalte innerhalb von <code> oder $...$ (LaTeX), damit Mathe nicht zerbricht.
+function md(text) {
+  if (!text) return '';
+  let result = text;
+
+  // 1. Markdown-Tabellen (mit <br> zwischen den Zeilen)
+  //    Pattern: |...|<br>|---|...|<br>|...|<br>...
+  result = result.replace(
+    /(\|[^|<>]*\|(?:[^|<>]*\|)+)(?:<br\s*\/?>)\s*(\|\s*-{2,}[\s|\-]*\|)((?:(?:<br\s*\/?>)\s*\|[^<]*\|)+)/gi,
+    (match, header, separator, bodyRaw) => {
+      const headerCells = header.split('|').slice(1, -1).map(c => c.trim());
+      const bodyRows = bodyRaw
+        .split(/<br\s*\/?>/i)
+        .map(r => r.trim())
+        .filter(r => r.startsWith('|') && r.endsWith('|'));
+
+      let html = '<table>';
+      html += '<tr>' + headerCells.map(c => `<th>${c}</th>`).join('') + '</tr>';
+      bodyRows.forEach(row => {
+        const cells = row.split('|').slice(1, -1).map(c => c.trim());
+        html += '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
+      });
+      html += '</table>';
+      return html;
+    }
+  );
+
+  // 2. **bold** → <b>bold</b>
+  //    Aber: nicht innerhalb von $...$ (LaTeX hat keine ** Konstruktion, sicher)
+  result = result.replace(/\*\*([^*\n]+?)\*\*/g, '<b>$1</b>');
+
+  return result;
+}
+
+// Hilfsfunktionen
+const $ = (id) => document.getElementById(id);
+const sortedUnique = (arr) => [...new Set(arr)].sort();
+
+// ===================== Persistenz =====================
+function loadProgress() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch { return {}; }
+}
+function saveProgress(p) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+}
+let progress = loadProgress();
+// progress: { cardId: { status: 'known'|'unknown', lastSeen: ISOString, attempts: n } }
+
+// ===================== State =====================
+const state = {
+  filters: {
+    weeks: new Set(sortedUnique(ALL_CARDS.map(c => c.week))),
+    categories: new Set(sortedUnique(ALL_CARDS.map(c => c.category))),
+    difficulties: new Set(['easy', 'medium', 'hard']),
+    statuses: new Set(['unseen', 'unknown', 'known']),
+  },
+  order: 'shuffled',  // 'sequential' | 'shuffled'
+  reviewMode: false,
+  activeCards: [],
+  currentIndex: 0,
+  showingBack: false,
+};
+
+function getStatus(cardId) {
+  return progress[cardId]?.status || 'unseen';
+}
+
+function applyFilters() {
+  let pool = ALL_CARDS.filter(c =>
+    state.filters.weeks.has(c.week) &&
+    state.filters.categories.has(c.category) &&
+    state.filters.difficulties.has(c.difficulty) &&
+    state.filters.statuses.has(getStatus(c.id))
+  );
+
+  if (state.reviewMode) {
+    pool = pool.filter(c => getStatus(c.id) === 'unknown');
+  }
+
+  if (state.order === 'shuffled') {
+    pool = shuffle(pool);
+  }
+
+  state.activeCards = pool;
+  state.currentIndex = Math.min(state.currentIndex, Math.max(0, pool.length - 1));
+}
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ===================== Rendering =====================
+function render() {
+  if (state.activeCards.length === 0) {
+    $('cardContainer').style.display = 'none';
+    $('emptyState').hidden = false;
+    $('counter').textContent = '0 / 0';
+    $('position').textContent = '– / –';
+    $('progressBar').style.width = '0%';
+    renderStats();
+    return;
+  }
+
+  $('cardContainer').style.display = '';
+  $('emptyState').hidden = true;
+
+  const card = state.activeCards[state.currentIndex];
+  const status = getStatus(card.id);
+
+  // Meta-Badges
+  const meta = $('cardMeta');
+  meta.innerHTML = '';
+  meta.appendChild(makeBadge('week', card.week));
+  meta.appendChild(makeBadge('category', card.category));
+  meta.appendChild(makeBadge('difficulty ' + card.difficulty, difficultyLabel(card.difficulty)));
+  if (status !== 'unseen') {
+    meta.appendChild(makeBadge('status ' + status, statusLabel(status)));
+  }
+
+  // Inhalt (mit Mini-Markdown-Konvertierung)
+  $('frontText').innerHTML = md(card.front);
+  $('backText').innerHTML = md(card.back);
+
+  // Front/Back Sichtbarkeit
+  $('cardBack').hidden = !state.showingBack;
+  $('actionsFlip').hidden = state.showingBack;
+  $('actionsGrade').hidden = !state.showingBack;
+
+  // Position & Counter
+  const pos = `${state.currentIndex + 1} / ${state.activeCards.length}`;
+  $('position').textContent = pos;
+  $('counter').textContent = pos;
+
+  // Fortschrittsbalken
+  const total = ALL_CARDS.length;
+  const known = Object.values(progress).filter(p => p.status === 'known').length;
+  $('progressBar').style.width = `${(known / total) * 100}%`;
+
+  // Nav buttons
+  $('prevBtn').disabled = state.currentIndex === 0;
+  $('nextBtn').disabled = state.currentIndex === state.activeCards.length - 1;
+
+  // MathJax neu rendern
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    window.MathJax.typesetPromise([$('cardMeta'), $('frontText'), $('backText')])
+      .catch(() => {});
+  }
+
+  renderStats();
+}
+
+function makeBadge(cls, text) {
+  const span = document.createElement('span');
+  span.className = 'badge ' + cls;
+  span.textContent = text;
+  return span;
+}
+
+function difficultyLabel(d) {
+  return { easy: 'leicht', medium: 'mittel', hard: 'schwer' }[d] || d;
+}
+function statusLabel(s) {
+  return { known: '✓ kann ich', unknown: '✗ muss üben', unseen: 'noch nicht' }[s] || s;
+}
+
+// ===================== Filter-Chips =====================
+function buildFilterUI() {
+  const weeks = sortedUnique(ALL_CARDS.map(c => c.week));
+  const categories = sortedUnique(ALL_CARDS.map(c => c.category));
+  buildChips('weekFilter', weeks, state.filters.weeks);
+  buildChips('categoryFilter', categories, state.filters.categories);
+
+  // Difficulty + Status sind statisch im HTML
+  document.querySelectorAll('#difficultyFilter .chip').forEach(chip => {
+    bindChip(chip, state.filters.difficulties);
+  });
+  document.querySelectorAll('#statusFilter .chip').forEach(chip => {
+    bindChip(chip, state.filters.statuses);
+  });
+
+  updateFilterChipsActive();
+  updateFilterCounts();
+}
+
+function buildChips(containerId, values, set) {
+  const c = $(containerId);
+  c.innerHTML = '';
+  values.forEach(v => {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.dataset.value = v;
+    chip.textContent = v;
+    bindChip(chip, set);
+    c.appendChild(chip);
+  });
+}
+
+function bindChip(chip, set) {
+  chip.addEventListener('click', () => {
+    const v = chip.dataset.value;
+    if (set.has(v)) set.delete(v); else set.add(v);
+    chip.classList.toggle('active');
+    state.currentIndex = 0;
+    state.showingBack = false;
+    state.reviewMode = false;
+    applyFilters();
+    updateFilterCounts();
+    render();
+  });
+}
+
+function updateFilterChipsActive() {
+  document.querySelectorAll('.chip').forEach(chip => {
+    const v = chip.dataset.value;
+    let active = false;
+    if (chip.parentElement.id === 'weekFilter') active = state.filters.weeks.has(v);
+    else if (chip.parentElement.id === 'categoryFilter') active = state.filters.categories.has(v);
+    else if (chip.parentElement.id === 'difficultyFilter') active = state.filters.difficulties.has(v);
+    else if (chip.parentElement.id === 'statusFilter') active = state.filters.statuses.has(v);
+    chip.classList.toggle('active', active);
+  });
+}
+
+function updateFilterCounts() {
+  const totalWeeks = sortedUnique(ALL_CARDS.map(c => c.week)).length;
+  const totalCategories = sortedUnique(ALL_CARDS.map(c => c.category)).length;
+  $('weekCount').textContent = `(${state.filters.weeks.size}/${totalWeeks})`;
+  $('categoryCount').textContent = `(${state.filters.categories.size}/${totalCategories})`;
+}
+
+// ===================== Statistik =====================
+function renderStats() {
+  const total = ALL_CARDS.length;
+  const known = Object.values(progress).filter(p => p.status === 'known').length;
+  const unknown = Object.values(progress).filter(p => p.status === 'unknown').length;
+  const unseen = total - known - unknown;
+  const filteredCount = state.activeCards.length;
+
+  let html = '';
+  html += statRow('Gefiltert', filteredCount, '');
+  html += `<div class="stat-divider"></div>`;
+  html += statRow('Total', total, '');
+  html += statRow('Kann ich', known, 'success');
+  html += statRow('Muss üben', unknown, 'warning');
+  html += statRow('Noch nicht', unseen, '');
+
+  // Pro Woche
+  html += `<div class="stat-divider"></div>`;
+  html += `<div class="stat-week-list">`;
+  const weeks = sortedUnique(ALL_CARDS.map(c => c.week));
+  weeks.forEach(w => {
+    const wCards = ALL_CARDS.filter(c => c.week === w);
+    const wKnown = wCards.filter(c => getStatus(c.id) === 'known').length;
+    const pct = (wKnown / wCards.length) * 100;
+    html += `<div class="stat-week-row">
+      <span class="label">${w}</span>
+      <span class="bar-track"><span class="bar-fill" style="width:${pct}%"></span></span>
+      <span class="num">${wKnown}/${wCards.length}</span>
+    </div>`;
+  });
+  html += `</div>`;
+
+  $('stats').innerHTML = html;
+}
+
+function statRow(label, value, cls) {
+  return `<div class="stat-row ${cls}"><span>${label}</span><strong>${value}</strong></div>`;
+}
+
+// ===================== Aktionen =====================
+function flipCard() {
+  if (state.activeCards.length === 0) return;
+  state.showingBack = true;
+  render();
+}
+
+function gradeCard(status) {
+  if (state.activeCards.length === 0) return;
+  const card = state.activeCards[state.currentIndex];
+  progress[card.id] = {
+    status,
+    lastSeen: new Date().toISOString(),
+    attempts: (progress[card.id]?.attempts || 0) + 1,
+  };
+  saveProgress(progress);
+
+  // Automatisch zur nächsten Karte
+  if (state.currentIndex < state.activeCards.length - 1) {
+    state.currentIndex++;
+    state.showingBack = false;
+  } else {
+    // Letzte Karte – bleiben, aber Status anzeigen
+    state.showingBack = true;
+  }
+  render();
+}
+
+function nextCard() {
+  if (state.currentIndex < state.activeCards.length - 1) {
+    state.currentIndex++;
+    state.showingBack = false;
+    render();
+  }
+}
+
+function prevCard() {
+  if (state.currentIndex > 0) {
+    state.currentIndex--;
+    state.showingBack = false;
+    render();
+  }
+}
+
+function shuffleCards() {
+  state.order = 'shuffled';
+  state.currentIndex = 0;
+  state.showingBack = false;
+  applyFilters();
+  render();
+}
+
+function startReviewMode() {
+  state.reviewMode = !state.reviewMode;
+  state.currentIndex = 0;
+  state.showingBack = false;
+  $('reviewBtn').textContent = state.reviewMode ? '✓ Review aktiv' : '📚 Nur "muss üben"';
+  applyFilters();
+  render();
+}
+
+function resetProgress() {
+  if (!confirm('Wirklich allen Lernfortschritt zurücksetzen?')) return;
+  progress = {};
+  saveProgress(progress);
+  state.reviewMode = false;
+  $('reviewBtn').textContent = '📚 Nur "muss üben"';
+  applyFilters();
+  render();
+}
+
+// ===================== Theme =====================
+function loadTheme() {
+  const t = localStorage.getItem(THEME_KEY) || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  $('themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem(THEME_KEY, next);
+  $('themeBtn').textContent = next === 'dark' ? '☀️' : '🌙';
+}
+
+// ===================== Event-Listener =====================
+$('flipBtn').addEventListener('click', flipCard);
+$('knownBtn').addEventListener('click', () => gradeCard('known'));
+$('unknownBtn').addEventListener('click', () => gradeCard('unknown'));
+$('nextBtn').addEventListener('click', nextCard);
+$('prevBtn').addEventListener('click', prevCard);
+$('shuffleBtn').addEventListener('click', shuffleCards);
+$('reviewBtn').addEventListener('click', startReviewMode);
+$('resetBtn').addEventListener('click', resetProgress);
+$('themeBtn').addEventListener('click', toggleTheme);
+
+$('card').addEventListener('click', (e) => {
+  if (e.target.closest('button')) return;
+  if (!state.showingBack) flipCard();
+});
+
+$('menuToggle').addEventListener('click', () => {
+  $('sidebar').classList.toggle('open');
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+  switch (e.key) {
+    case ' ':
+    case 'Enter':
+      e.preventDefault();
+      if (!state.showingBack) flipCard();
+      break;
+    case 'ArrowRight':
+      nextCard();
+      break;
+    case 'ArrowLeft':
+      prevCard();
+      break;
+    case 'j': case 'J':
+      if (state.showingBack) gradeCard('known');
+      break;
+    case 'f': case 'F':
+      if (state.showingBack) gradeCard('unknown');
+      break;
+    case 's': case 'S':
+      shuffleCards();
+      break;
+  }
+});
+
+// ===================== Init =====================
+loadTheme();
+buildFilterUI();
+applyFilters();
+render();
+</script>
+</body>
+</html>
